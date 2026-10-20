@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+@theme {
+  --color-night: #0b1220;
+  --color-panel: #111a2e;
+  --color-panel-2: #16213a;
+  --color-adobe: #f7f5f0;
+  --color-adobe-2: #efebe2;
+  --color-ink: #0f172a;
+  --color-cyan: #22d3ee;
+  --color-blue: #3b82f6;
+  --color-chile: #c2410c;
+  --color-zia: #f2b705;
+  --color-line: rgb(255 255 255 / 0.08);
+
+  --font-heading: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-2xl: 1rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-night text-slate-200 font-sans antialiased;
+    overflow-x: hidden;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading tracking-tight text-balance;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-cyan);
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility container-x {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (min-width: 640px) {
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(90deg, var(--color-cyan), var(--color-blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-gradient-accent {
+  background-image: linear-gradient(90deg, var(--color-cyan), var(--color-blue));
+}
+
+@utility card {
+  border-radius: 1rem;
+  border: 1px solid var(--color-line);
+  background-color: var(--color-panel);
+}
+
+@utility card-light {
+  border-radius: 1rem;
+  border: 1px solid rgb(15 23 42 / 0.08);
+  background-color: #fff;
+}
+
+/* Animated color-cycling underline under the hero accent word. */
+@keyframes hue-cycle {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+.accent-underline {
+  position: relative;
+  white-space: nowrap;
+}
+.accent-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.12em;
+  height: 0.12em;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #22d3ee, #3b82f6, #a855f7, #f2b705, #c2410c, #22d3ee);
+  background-size: 200% 100%;
+  animation: hue-cycle 6s linear infinite;
+}
+
+/* Scroll reveal: CSS-only, progressively enhanced, no JS. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Glow behind lit-home imagery. */
+.glow {
+  position: relative;
+}
+.glow::before {
+  content: "";
+  position: absolute;
+  inset: 8% 6%;
+  z-index: -1;
+  border-radius: 2rem;
+  background: radial-gradient(closest-side, rgb(34 211 238 / 0.35), rgb(59 130 246 / 0.15), transparent);
+  filter: blur(40px);
+}
+
+/* FAQ accordion marker */
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .faq-icon {
+  transform: rotate(45deg);
+}
+
+/* Prose for blog + long-form */
+.prose-site {
+  @apply text-slate-700 leading-relaxed;
+}
+.prose-site h2 {
+  @apply text-2xl sm:text-3xl font-semibold text-ink mt-10 mb-4;
+}
+.prose-site h3 {
+  @apply text-xl font-semibold text-ink mt-8 mb-3;
+}
+.prose-site p {
+  @apply my-4;
+}
+.prose-site ul {
+  @apply my-4 list-disc pl-6 space-y-2;
+}
+.prose-site ol {
+  @apply my-4 list-decimal pl-6 space-y-2;
+}
+.prose-site a {
+  @apply text-blue-700 underline underline-offset-2 hover:text-chile;
+}
+.prose-site strong {
+  @apply text-ink;
+}
+.prose-site table {
+  @apply my-6 w-full text-left text-sm border-collapse;
+}
+.prose-site th {
+  @apply bg-adobe-2 font-semibold text-ink p-3 border border-slate-200;
+}
+.prose-site td {
+  @apply p-3 border border-slate-200 align-top;
+}
+.prose-site blockquote {
+  @apply border-l-4 border-zia pl-4 italic text-slate-600;
+}
