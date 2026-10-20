@@ -62,7 +62,7 @@ export function CityServicePage({ cs }: { cs: CityService }) {
       <Breadcrumbs crumbs={crumbs} />
 
       <Section>
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow={`${label} ${cs.name}`} title={`${cs.name} Designed for ${label}`} />
           <Prose paragraphs={cs.intro} />
         </div>
@@ -70,7 +70,7 @@ export function CityServicePage({ cs }: { cs: CityService }) {
 
       {cs.sections.map((s, i) => (
         <Section key={s.heading} tone={i % 2 === 0 ? "light" : "dark"}>
-          <div className="grid gap-10 lg:grid-cols-2">
+          <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
             <SectionHeading tone={i % 2 === 0 ? "light" : "dark"} title={s.heading} />
             <Prose tone={i % 2 === 0 ? "light" : "dark"} paragraphs={s.paragraphs} />
           </div>

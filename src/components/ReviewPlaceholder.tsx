@@ -10,10 +10,10 @@ export function ReviewPlaceholder({ index = 1 }: { index?: number }) {
       <div className="flex gap-1 text-slate-300" aria-hidden="true">
         {Array.from({ length: 5 }).map((_, i) => <Star key={i} className="h-4 w-4" />)}
       </div>
-      <blockquote className="mt-4 flex-1 text-slate-500 italic">
+      <blockquote className="mt-4 flex-1 text-slate-600 italic">
         [PLACEHOLDER] Real Google review #{index} goes here. Paste the customer&apos;s words exactly as written.
       </blockquote>
-      <figcaption className="mt-4 text-sm font-semibold text-slate-400">[Reviewer first name] · [Neighborhood]</figcaption>
+      <figcaption className="mt-4 text-sm font-semibold text-slate-600">[Reviewer first name] · [Neighborhood]</figcaption>
     </figure>
   );
 }

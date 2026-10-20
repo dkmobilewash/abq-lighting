@@ -10,7 +10,12 @@ export function MobileMenu() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  useEffect(() => setOpen(false), [pathname]);
+  // Close the drawer after navigation (render-time state sync; no effect needed).
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    setOpen(false);
+  }
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);

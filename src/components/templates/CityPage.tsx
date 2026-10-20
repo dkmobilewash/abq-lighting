@@ -72,7 +72,7 @@ export function CityPage({ city }: { city: City }) {
 
       {/* 3. Transform */}
       <Section>
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow={`${label} Permanent Lighting`} title={`Transform Your ${label} Home with Smart Permanent Lighting`} />
           <Prose paragraphs={city.intro} />
         </div>
@@ -80,7 +80,7 @@ export function CityPage({ city }: { city: City }) {
 
       {/* 4. Built for homes */}
       <Section tone="light">
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading tone="light" eyebrow="Built for New Mexico" title={`Permanent Lighting Built for ${label} Homes`} />
           <Prose tone="light" paragraphs={city.homes} />
         </div>
@@ -120,7 +120,7 @@ export function CityPage({ city }: { city: City }) {
 
       {/* 6. Lifestyle */}
       <Section tone="panel">
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow="Year-Round Scheduling" title={`Lighting Made for the Way ${label} Lives Outdoors`} />
           <Prose paragraphs={city.lifestyle} />
         </div>
@@ -128,11 +128,11 @@ export function CityPage({ city }: { city: City }) {
 
       {/* 7. Local installer */}
       <Section tone="light">
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading tone="light" eyebrow="Local Crew" title={`A Local ${label} Installer You Can Count On`} />
           <div>
             <Prose tone="light" paragraphs={city.localInstaller} />
-            <p className="mt-4 text-sm text-slate-500">Licensed &amp; insured · NM License {business.licenseNumber}</p>
+            <p className="mt-4 text-sm text-slate-600">Licensed &amp; insured · NM License {business.licenseNumber}</p>
           </div>
         </div>
       </Section>
@@ -213,7 +213,7 @@ export function CityPage({ city }: { city: City }) {
         {business.googleReviewsUrl ? (
           <a href={business.googleReviewsUrl} className="mt-6 inline-flex min-h-11 items-center font-semibold text-chile hover:underline" target="_blank" rel="noopener noreferrer">See our Google reviews →</a>
         ) : (
-          <p className="mt-6 text-sm text-slate-500">[PLACEHOLDER] &quot;See our Google reviews&quot; link appears once business.googleReviewsUrl is set.</p>
+          <p className="mt-6 text-sm text-slate-600">[PLACEHOLDER] &quot;See our Google reviews&quot; link appears once business.googleReviewsUrl is set.</p>
         )}
       </Section>
 

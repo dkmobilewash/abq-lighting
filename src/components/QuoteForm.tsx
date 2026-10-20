@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import { useForm, type FieldErrors, type Resolver } from "react-hook-form";
@@ -12,7 +13,9 @@ type Values = Record<string, unknown>;
 /** Minimal zod → react-hook-form resolver (avoids an extra dependency). */
 function zodResolver(schema: z.ZodType): Resolver<Values> {
   return async (values) => {
-    const r = schema.safeParse(values);
+    // Unselected radios/selects come through as null; treat them as "not provided".
+    const clean = Object.fromEntries(Object.entries(values).map(([k, v]) => [k, v === null ? undefined : v]));
+    const r = schema.safeParse(clean);
     if (r.success) return { values: r.data as Values, errors: {} };
     const errors: Record<string, { type: string; message: string }> = {};
     for (const issue of r.error.issues) {
@@ -95,7 +98,7 @@ export function QuoteForm({
   );
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4" aria-label="Free quote request">
+    <form onSubmit={handleSubmit(onSubmit, () => setServerError("Please check the fields above and try again."))} noValidate className="space-y-4" aria-label="Free quote request">
       <div className="grid gap-4 sm:grid-cols-2">
         {field("firstName", "First name", { autoComplete: "given-name", required: true })}
         {field("lastName", "Last name", { autoComplete: "family-name", required: true })}
@@ -162,8 +165,8 @@ export function QuoteForm({
         <label className="flex gap-3">
           <input type="checkbox" className="mt-1 h-5 w-5 shrink-0 accent-cyan-400" aria-invalid={errors.terms ? true : undefined} {...register("terms")} />
           <span>
-            I agree to the <a href="/terms-and-conditions/" className="underline hover:text-cyan">Terms</a> and{" "}
-            <a href="/privacy-policy/" className="underline hover:text-cyan">Privacy Policy</a>.<span className="text-zia"> *</span>
+            I agree to the <Link href="/terms-and-conditions/" className="underline hover:text-cyan">Terms</Link> and{" "}
+            <Link href="/privacy-policy/" className="underline hover:text-cyan">Privacy Policy</Link>.<span className="text-zia"> *</span>
           </span>
         </label>
         {err("terms")}

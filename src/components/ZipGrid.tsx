@@ -8,7 +8,7 @@ export function ZipGrid({ cities }: { cities: City[] }) {
       {chips.map((z) => (
         <li key={z.key} className="card-light flex flex-col px-4 py-3">
           <span className="font-heading text-lg font-semibold text-ink">{z.zip}</span>
-          <span className="text-sm text-slate-500">{z.label}, NM</span>
+          <span className="text-sm text-slate-600">{z.label}, NM</span>
         </li>
       ))}
     </ul>

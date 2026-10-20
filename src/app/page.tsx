@@ -65,7 +65,7 @@ export default function Home() {
       </section>
 
       <Section>
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow="Permanent Lighting Albuquerque" title="Smart LED Roofline Lights That Stay Up Year-Round" />
           <div>
             <Prose paragraphs={[
@@ -151,6 +151,10 @@ export default function Home() {
       <Section>
         <SectionHeading eyebrow="Why Us" title={`Why Albuquerque Homeowners Choose ${business.name}`} />
         <FeatureGrid items={systemFeatures} cols={4} />
+        <div className="mt-8 flex flex-wrap gap-x-6">
+          <CardLink href="/why-us/">Why choose a local crew</CardLink>
+          <CardLink href="/warranty/">Our warranty</CardLink>
+        </div>
       </Section>
 
       <Section tone="panel">

@@ -7,7 +7,7 @@ import { Header } from "@/components/Header";
 import { MobileStickyBar } from "@/components/MobileStickyBar";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap", preload: false });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", display: "swap", weight: ["500", "600", "700"] });
 
 export const metadata: Metadata = {

@@ -7,7 +7,7 @@ export function Eyebrow({ children, tone = "dark" }: { children: ReactNode; tone
   return (
     <span
       className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] ${
-        tone === "dark" ? "border-cyan/30 bg-cyan/10 text-cyan" : "border-chile/25 bg-chile/10 text-chile"
+        tone === "dark" ? "border-cyan/30 bg-cyan/10 text-cyan" : "border-chile/25 bg-chile/10 text-orange-800"
       }`}
     >
       <span className="h-1.5 w-1.5 rounded-full bg-zia" aria-hidden="true" />

@@ -28,7 +28,7 @@ export default function Page() {
       />
       <Breadcrumbs crumbs={crumbs} />
       <Section>
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow="Holiday Lighting Albuquerque" title="Stop Hanging Lights. Start Scheduling Them." />
           <Prose paragraphs={[
             "Traditional holiday lights mean a weekend on the ladder in November and another one in January. Permanent lighting replaces all of that with a low-profile track that stays up year-round and disappears against your fascia or stucco by day.",

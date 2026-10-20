@@ -155,13 +155,13 @@ function svgScene(shape, colors, { night }) {
   const mtn = `<path d="M0 ${GROUND - 260} L180 ${GROUND - 330} L420 ${GROUND - 420} L640 ${GROUND - 470} L860 ${GROUND - 440} L1100 ${GROUND - 380} L1350 ${GROUND - 320} L1600 ${GROUND - 280} L1600 ${GROUND} L0 ${GROUND} Z" fill="${night ? "#0A1222" : "#9BAFC4"}"/>`;
   const ground = `<rect x="0" y="${GROUND}" width="${W}" height="${H - GROUND}" fill="${night ? "#0B0F18" : "#C9B79A"}"/>`;
   let body = shape.body;
-  if (!night) body = body.replace(/fill="#[0-9A-Fa-f]{6}"/g, (m, i) => `fill="#D9C3A5"`);
+  if (!night) body = body.replace(/fill="#[0-9A-Fa-f]{6}"/g, () => `fill="#D9C3A5"`);
   let lights = "";
   if (night) {
     for (const line of shape.lights) {
       const dots = dotsAlong(line, 22);
       lights += `<g filter="url(#glow)">${dots.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="7" fill="${colors[i % colors.length]}"/>`).join("")}</g>`;
-      lights += dots.map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="3" fill="#fff" opacity="0.9"/>`).join("");
+      lights += dots.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="#fff" opacity="0.9"/>`).join("");
     }
     for (const [x, y] of shape.spots || []) {
       lights += `<ellipse cx="${x}" cy="${y - 120}" rx="70" ry="160" fill="${colors[0]}" opacity="0.18" filter="url(#soft)"/>`;

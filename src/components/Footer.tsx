@@ -77,7 +77,7 @@ export function Footer() {
             </ul>
           )}
         </div>
-        <p className="container-x pb-8 text-xs text-slate-500">© {new Date().getFullYear()} {business.name}. All rights reserved.</p>
+        <p className="container-x pb-8 text-xs text-slate-400">© {new Date().getFullYear()} {business.name}. All rights reserved.</p>
       </div>
     </footer>
   );

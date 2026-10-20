@@ -47,7 +47,7 @@ export function ServicePage({ s }: { s: Service }) {
       <Breadcrumbs crumbs={crumbs} />
 
       <Section>
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow={s.shortName} title={`What Is Permanent ${s.name}?`} />
           <Prose paragraphs={s.whatItIs} />
         </div>
@@ -76,7 +76,7 @@ export function ServicePage({ s }: { s: Service }) {
       </Section>
 
       <Section tone="panel">
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <div>
             <SectionHeading eyebrow="Built for New Mexico" title="Made for High-Desert Sun, Wind & Monsoons" />
             <ul className="grid grid-cols-2 gap-3 text-sm text-slate-300">

@@ -52,7 +52,7 @@ export function HolidayPage({ h }: { h: Holiday }) {
       <Breadcrumbs crumbs={crumbs} />
 
       <Section>
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow={h.navLabel} title={`${h.name} Lighting Without the Ladder`} />
           <Prose paragraphs={h.intro} />
         </div>
@@ -71,7 +71,7 @@ export function HolidayPage({ h }: { h: Holiday }) {
                 {p.colors.map((c) => (
                   <li key={c.hex + c.name} className="inline-flex items-center gap-2 rounded-full border border-line px-3 py-1 text-xs text-slate-300">
                     <span className="h-3.5 w-3.5 rounded-full border border-white/20" style={{ backgroundColor: c.hex }} aria-hidden="true" />
-                    {c.name} <span className="text-slate-500">{c.hex}</span>
+                    {c.name} <span className="text-slate-400">{c.hex}</span>
                   </li>
                 ))}
               </ul>
@@ -87,7 +87,7 @@ export function HolidayPage({ h }: { h: Holiday }) {
 
       {h.sections?.map((s, i) => (
         <Section key={s.heading} tone={i % 2 === 0 ? "light" : "dark"}>
-          <div className="grid gap-10 lg:grid-cols-2">
+          <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
             <SectionHeading tone={i % 2 === 0 ? "light" : "dark"} title={s.heading} />
             <Prose tone={i % 2 === 0 ? "light" : "dark"} paragraphs={s.paragraphs} />
           </div>
@@ -115,7 +115,7 @@ export function HolidayPage({ h }: { h: Holiday }) {
           {(h.slug === "christmas-lights" ? siblings : [christmas, ...siblings]).map((x) => (
             <li key={x.slug}>
               <Link href={paths.holiday(x)} className="card flex min-h-14 items-center justify-between px-5 py-4 text-slate-200 hover:border-zia/60 hover:text-zia">
-                {x.navLabel} <span className="text-xs text-slate-500">{x.month}</span>
+                {x.navLabel} <span className="text-xs text-slate-400">{x.month}</span>
               </Link>
             </li>
           ))}

@@ -58,7 +58,7 @@ export function ApplicationPage({ a }: { a: Application }) {
       </Section>
 
       <Section tone="panel">
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow="Who It's For" title={`${a.shortName} Properties We Light`} />
           <ul className="grid gap-3 sm:grid-cols-2">
             {a.useCases.map((u) => <li key={u} className="card px-4 py-3 text-slate-200">{u}</li>)}

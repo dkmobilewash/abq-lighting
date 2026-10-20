@@ -52,21 +52,21 @@ export function NeighborhoodPage({ n }: { n: Neighborhood }) {
       <Breadcrumbs crumbs={crumbs} />
 
       <Section>
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow={n.name} title={`Smart Permanent Lighting for ${n.name} Homes`} />
           <Prose paragraphs={n.intro} />
         </div>
       </Section>
 
       <Section tone="light">
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading tone="light" eyebrow="Homes & Architecture" title={`Designed for ${n.name} Rooflines`} />
           <Prose tone="light" paragraphs={n.homes} />
         </div>
       </Section>
 
       <Section tone="panel">
-        <div className="grid gap-10 lg:grid-cols-2">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <div>
             <SectionHeading eyebrow="Living Here" title={`Lighting for Life in ${n.name}`} />
             <h3 className="font-semibold text-white">Around the neighborhood</h3>
@@ -118,7 +118,7 @@ export function NeighborhoodPage({ n }: { n: Neighborhood }) {
             <li><Link href={paths.city(abq.slug)} className="inline-flex min-h-11 items-center rounded-full border border-zia/40 bg-zia/10 px-4 text-sm text-zia hover:text-cyan">All of Albuquerque</Link></li>
             <li><Link href="/service-areas/" className="inline-flex min-h-11 items-center rounded-full border border-line px-4 text-sm text-slate-300 hover:text-cyan">All service areas</Link></li>
           </ul>
-          <p className="mt-6 text-sm text-slate-500">ZIP codes: {n.zips.join(", ")} · {business.name}</p>
+          <p className="mt-6 text-sm text-slate-400">ZIP codes: {n.zips.join(", ")} · {business.name}</p>
         </div>
       </Section>
 
