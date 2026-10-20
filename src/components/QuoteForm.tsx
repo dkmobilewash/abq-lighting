@@ -56,7 +56,7 @@ export function QuoteForm({
 
   async function onSubmit(values: Values) {
     setServerError(null);
-    const res = await fetch("/api/quote", {
+    const res = await fetch("/api/quote/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
