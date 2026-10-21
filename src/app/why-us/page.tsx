@@ -1,3 +1,5 @@
+import { SiteRelated } from "@/components/RelatedLinks";
+import { Linker } from "@/lib/linker";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CTABand } from "@/components/CTABand";
 import { FeatureGrid } from "@/components/FeatureGrid";
@@ -27,18 +29,20 @@ const reasons: Feature[] = [
 export default function Page() {
   const info = routeInfo(path);
   const crumbs = [{ name: "Home", path: "/" }, { name: "Why Us", path }];
+  const linker = new Linker(path);
   return (
     <>
-      <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs, localBusiness: true })} />
+      <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs, localBusiness: true, pageType: "AboutPage" })} />
       <PageHeader eyebrow="Why Choose Us" title="A Local Albuquerque Crew for Permanent Lighting Done Right" intro="Permanent lighting is a long-term part of your home. Who designs and installs it matters as much as the lights themselves." />
       <Breadcrumbs crumbs={crumbs} />
       <Section>
-        <FeatureGrid items={reasons} />
+        <SectionHeading eyebrow="Six Reasons" title="Why Albuquerque Homeowners Choose a Local Permanent Lighting Installer" />
+        <FeatureGrid items={reasons} linker={linker} />
       </Section>
       <Section tone="light">
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading tone="light" eyebrow="Our Approach" title="Clean Lines, Hidden Track, Honest Quotes" />
-          <Prose tone="light" paragraphs={[
+          <Prose tone="light" linker={linker} paragraphs={[
             "Good permanent lighting should look like it came with the house. We take time on the design: following the true lines of your roof and parapets, matching track color to your fascia or stucco, and placing the controller and power where they stay out of sight.",
             "Our quotes are written and itemized so you can see exactly what you're getting. We'll tell you what affects your price, what we'd recommend and what you can skip. If permanent lighting isn't a fit for your home, we'll say so.",
             "After the install, we set up the app with you, load a few scenes and a sunset schedule, and make sure everyone in the house knows how to use it.",
@@ -58,6 +62,7 @@ export default function Page() {
         <SectionHeading tone="light" eyebrow="Reviews" title="From Our Customers" />
         <div className="grid gap-5 md:grid-cols-3">{[1, 2, 3].map((i) => <ReviewPlaceholder key={i} index={i} />)}</div>
       </Section>
+      <SiteRelated current={path} />
       <CTABand title="Let's Design Your Lighting Together" />
     </>
   );

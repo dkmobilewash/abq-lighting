@@ -6,7 +6,11 @@ import { processSteps } from "@/data/process";
 import { services } from "@/data/services";
 import type { Service } from "@/data/types";
 import { paths, routeInfo } from "@/lib/routes";
+import { Linker } from "@/lib/linker";
+import { applicationLinks, localHolidayLinks, neighborhoodLinks, postLinks, relatedPosts } from "@/lib/related";
+import { RelatedLinks } from "../RelatedLinks";
 import { faqNode, pageGraph, serviceNode, type Crumb } from "@/lib/schema";
+import { absoluteUrl } from "@/lib/seo";
 import { Breadcrumbs } from "../Breadcrumbs";
 import { CTABand } from "../CTABand";
 import { FAQAccordion } from "../FAQAccordion";
@@ -27,12 +31,14 @@ export function ServicePage({ s }: { s: Service }) {
   ];
   const local = cityServices.filter((cs) => cs.service === s.slug);
   const others = services.filter((x) => x.slug !== s.slug);
+  const linker = new Linker(path);
 
   return (
     <>
       <JsonLd
         data={pageGraph({
           path, title: info.title, description: info.description, crumbs,
+          mainEntity: `${absoluteUrl(path)}#service`,
           extra: [serviceNode({ path, name: s.name, serviceType: s.primaryKeyword, description: s.metaDescription }), faqNode(path, s.faqs)],
         })}
       />
@@ -49,13 +55,13 @@ export function ServicePage({ s }: { s: Service }) {
       <Section>
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow={s.shortName} title={`What Is Permanent ${s.name}?`} />
-          <Prose paragraphs={s.whatItIs} />
+          <Prose paragraphs={s.whatItIs} linker={linker} />
         </div>
       </Section>
 
       <Section tone="light">
         <SectionHeading tone="light" eyebrow="Benefits" title={`Why Albuquerque Homeowners Choose ${s.name}`} />
-        <FeatureGrid tone="light" items={s.benefits.map((b, i) => ({ ...b, icon: (["sparkles", "smartphone", "sun", "zap", "shield", "palette"] as const)[i % 6] }))} />
+        <FeatureGrid tone="light" linker={linker} items={s.benefits.map((b, i) => ({ ...b, icon: (["sparkles", "smartphone", "sun", "zap", "shield", "palette"] as const)[i % 6] }))} />
       </Section>
 
       <Section>
@@ -68,7 +74,7 @@ export function ServicePage({ s }: { s: Service }) {
               </div>
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-white">{p.title}</h3>
-                <p className="mt-2 text-slate-400">{p.body}</p>
+                <p className="mt-2 text-slate-400">{linker.link(p.body)}</p>
               </div>
             </li>
           ))}
@@ -85,7 +91,7 @@ export function ServicePage({ s }: { s: Service }) {
               ))}
             </ul>
           </div>
-          <Prose paragraphs={s.durability} />
+          <Prose paragraphs={s.durability} linker={linker} />
         </div>
       </Section>
 
@@ -109,7 +115,7 @@ export function ServicePage({ s }: { s: Service }) {
 
       <Section tone="light">
         <SectionHeading tone="light" eyebrow="FAQs" title={`${s.name} FAQs`} />
-        <div className="max-w-4xl"><FAQAccordion faqs={s.faqs} /></div>
+        <div className="max-w-4xl"><FAQAccordion faqs={s.faqs} linker={linker} /></div>
       </Section>
 
       <Section>
@@ -131,6 +137,16 @@ export function ServicePage({ s }: { s: Service }) {
           {others.map((o) => <li key={o.slug}><CardLink href={paths.service(o)}>{o.name}</CardLink></li>)}
         </ul>
       </Section>
+
+      <RelatedLinks
+        title={`More About ${s.name}`}
+        groups={[
+          { heading: "Albuquerque Neighborhoods", links: neighborhoodLinks({ only: ["northeast-heights", "nob-hill", "four-hills", "sandia-heights", "high-desert", "westside-ventana-ranch"] }).map((l) => ({ ...l, label: l.label.replace("permanent lighting", s.shortName.toLowerCase()) })) },
+          { heading: "Holiday & Event Lighting", links: localHolidayLinks().slice(0, 5) },
+          { heading: "Homes & Businesses", links: applicationLinks() },
+          { heading: "Guides", links: postLinks(relatedPosts({ service: path })) },
+        ]}
+      />
 
       <CTABand title={`Ready for ${s.name} on Your Albuquerque Home?`} />
     </>

@@ -1,7 +1,8 @@
 import type { Feature } from "@/data/types";
+import type { Linker } from "@/lib/linker";
 import { Icon } from "./Icon";
 
-export function FeatureGrid({ items, tone = "dark", cols = 3 }: { items: Feature[]; tone?: "dark" | "light"; cols?: 2 | 3 | 4 }) {
+export function FeatureGrid({ items, tone = "dark", cols = 3, linker }: { items: Feature[]; tone?: "dark" | "light"; cols?: 2 | 3 | 4; linker?: Linker }) {
   const grid = { 2: "sm:grid-cols-2", 3: "sm:grid-cols-2 lg:grid-cols-3", 4: "sm:grid-cols-2 lg:grid-cols-4" }[cols];
   const dark = tone === "dark";
   return (
@@ -12,7 +13,7 @@ export function FeatureGrid({ items, tone = "dark", cols = 3 }: { items: Feature
             <Icon name={f.icon} />
           </div>
           <h3 className={`text-lg font-semibold ${dark ? "text-white" : "text-ink"}`}>{f.title}</h3>
-          <p className={`mt-2 leading-relaxed ${dark ? "text-slate-400" : "text-slate-600"}`}>{f.body}</p>
+          <p className={`mt-2 leading-relaxed ${dark ? "text-slate-400" : "text-slate-600"}`}>{linker ? linker.link(f.body) : f.body}</p>
         </li>
       ))}
     </ul>

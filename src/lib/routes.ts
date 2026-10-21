@@ -8,6 +8,7 @@ import { pillar } from "@/data/pillar";
 import { posts } from "@/data/posts";
 import { services } from "@/data/services";
 import type { City, CityService, Holiday, Neighborhood, Service } from "@/data/types";
+import { cityHeroImages, cityServiceImages, defaultHero, holidayImage } from "@/data/pageImages";
 import { titleWithBrand } from "./seo";
 
 /**
@@ -20,7 +21,14 @@ export type RouteInfo = {
   description: string;
   priority: number;
   noindex?: boolean;
+  /** Primary image (image sitemap, OG fallback, schema primaryImageOfPage). */
+  image?: string;
+  /** ISO date the page content last changed (sitemap <lastmod>, schema dateModified). */
+  lastModified?: string;
 };
+
+/** Bump this when you make site-wide content changes; pages without their own date use it. */
+export const contentUpdated = "2026-10-21";
 
 export const holidayHubPath = "/permanent-holiday-lights/";
 
@@ -147,6 +155,12 @@ const staticRoutes: RouteInfo[] = [
     priority: 0.2,
   },
   {
+    path: "/site-map/",
+    title: titleWithBrand("Site Map"),
+    description: "Every page on the Albuquerque Permanent Lighting Co. website: services, holiday lighting, service areas, neighborhoods and guides.",
+    priority: 0.3,
+  },
+  {
     path: "/thank-you/",
     title: titleWithBrand("Thank You"),
     description: "Thanks for your quote request. A member of our Albuquerque team will be in touch soon.",
@@ -156,16 +170,17 @@ const staticRoutes: RouteInfo[] = [
 ];
 
 export function allRoutes(): RouteInfo[] {
-  return [
+  const routes: RouteInfo[] = [
     ...staticRoutes,
-    ...services.map((s) => ({ path: paths.service(s), title: titles.service(s), description: s.metaDescription, priority: 0.9 })),
-    ...applications.map((a) => ({ path: paths.application(a.slug), title: titleWithBrand(a.name.includes("Albuquerque") ? a.name : `${a.name} Albuquerque`), description: a.metaDescription, priority: 0.8 })),
-    ...holidays.map((h) => ({ path: paths.holiday(h), title: titles.holiday(h), description: h.metaDescription, priority: h.slug === "christmas-lights" ? 0.9 : 0.7 })),
-    ...cities.map((c) => ({ path: paths.city(c.slug), title: titles.city(c), description: c.metaDescription, priority: c.slug === "albuquerque" ? 0.9 : 0.8 })),
-    ...neighborhoods.map((n) => ({ path: paths.neighborhood(n.slug), title: titles.neighborhood(n), description: n.metaDescription, priority: 0.7 })),
-    ...cityServices.map((cs) => ({ path: paths.cityService(cs), title: titles.cityService(cs), description: cs.metaDescription, priority: 0.8 })),
-    ...posts.map((p) => ({ path: paths.post(p.slug), title: titleWithBrand(p.title), description: p.description, priority: 0.6 })),
+    ...services.map((s) => ({ path: paths.service(s), title: titles.service(s), description: s.metaDescription, priority: 0.9, image: s.image })),
+    ...applications.map((a) => ({ path: paths.application(a.slug), title: titleWithBrand(a.name.includes("Albuquerque") ? a.name : `${a.name} Albuquerque`), description: a.metaDescription, priority: 0.8, image: a.image })),
+    ...holidays.map((h) => ({ path: paths.holiday(h), title: titles.holiday(h), description: h.metaDescription, priority: h.slug === "christmas-lights" ? 0.9 : 0.7, image: holidayImage(h.slug) })),
+    ...cities.map((c) => ({ path: paths.city(c.slug), title: titles.city(c), description: c.metaDescription, priority: c.slug === "albuquerque" ? 0.9 : 0.8, image: (cityHeroImages[c.slug] ?? defaultHero).src })),
+    ...neighborhoods.map((n) => ({ path: paths.neighborhood(n.slug), title: titles.neighborhood(n), description: n.metaDescription, priority: 0.7, image: defaultHero.src })),
+    ...cityServices.map((cs) => ({ path: paths.cityService(cs), title: titles.cityService(cs), description: cs.metaDescription, priority: 0.8, image: cityServiceImages[cs.service].src })),
+    ...posts.map((p) => ({ path: paths.post(p.slug), title: titleWithBrand(p.title), description: p.description, priority: 0.6, image: p.image, lastModified: p.date })),
   ];
+  return routes.map((r) => ({ image: defaultHero.src, lastModified: contentUpdated, ...r }));
 }
 
 export function routeInfo(path: string): RouteInfo {

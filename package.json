@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "qa:crawl": "node scripts/qa-crawl.mjs",
+    "qa:schema": "node scripts/validate-schema.mjs"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
@@ -19,6 +21,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.2",
     "postcss": "^8.5.31",
+    "schema-dts": "^2.1.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
   },

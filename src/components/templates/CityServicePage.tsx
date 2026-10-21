@@ -4,8 +4,13 @@ import { cityServices } from "@/data/cityServices";
 import { systemFeatures } from "@/data/features";
 import { processSteps } from "@/data/process";
 import type { CityService } from "@/data/types";
+import { cityServiceImages } from "@/data/pageImages";
 import { paths, routeInfo } from "@/lib/routes";
-import { faqNode, pageGraph, serviceNode, type Crumb } from "@/lib/schema";
+import { Linker } from "@/lib/linker";
+import { localHolidayLinks, localOverrides, neighborhoodLinks, popularServiceLinks, postLinks, relatedPosts } from "@/lib/related";
+import { RelatedLinks } from "../RelatedLinks";
+import { cityNode, faqNode, pageGraph, serviceNode, type Crumb } from "@/lib/schema";
+import { absoluteUrl } from "@/lib/seo";
 import { Breadcrumbs } from "../Breadcrumbs";
 import { CTABand } from "../CTABand";
 import { FAQAccordion } from "../FAQAccordion";
@@ -16,12 +21,6 @@ import { NAPCard } from "../NAPCard";
 import { ProjectCarousel } from "../ProjectCarousel";
 import { CardLink, Prose, Section, SectionHeading } from "../ui";
 
-const images: Record<CityService["service"], { src: string; alt: (city: string) => string }> = {
-  "permanent-christmas-lights": { src: "/images/placeholders/christmas-roofline-colors.jpg", alt: (c) => `${c} home with permanent Christmas lights in red, green and white` },
-  "roofline-lighting": { src: "/images/placeholders/roofline-stucco-home-night.jpg", alt: (c) => `Stucco home in ${c} with permanent roofline lighting` },
-  "landscape-lighting": { src: "/images/placeholders/landscape-xeriscape-lights.jpg", alt: (c) => `Xeriscaped yard in ${c} with landscape lighting at night` },
-  "commercial-lighting": { src: "/images/placeholders/commercial-storefront-night.jpg", alt: (c) => `${c} storefront with permanent commercial outline lighting` },
-};
 
 export function CityServicePage({ cs }: { cs: CityService }) {
   const city = getCity(cs.city)!;
@@ -36,15 +35,19 @@ export function CityServicePage({ cs }: { cs: CityService }) {
   ];
   const siblings = cityServices.filter((x) => x.city === cs.city && x.service !== cs.service);
   const otherCity = cityServices.filter((x) => x.service === cs.service && x.city !== cs.city);
-  const img = images[cs.service];
+  const img = cityServiceImages[cs.service];
+  const linker = new Linker(path, { overrides: localOverrides(city.slug) });
 
   return (
     <>
       <JsonLd
         data={pageGraph({
           path, title: info.title, description: info.description, crumbs,
+          place: `${absoluteUrl(paths.city(city.slug))}#place`,
+          mainEntity: `${absoluteUrl(path)}#service`,
           extra: [
-            serviceNode({ path, name: `${cs.name} in ${label}, NM`, serviceType: cs.name, description: info.description, area: `${label}, NM` }),
+            cityNode(city),
+            serviceNode({ path, name: `${cs.name} in ${label}, NM`, serviceType: cs.name, description: info.description, areaId: `${absoluteUrl(paths.city(city.slug))}#place` }),
             faqNode(path, cs.faqs),
           ],
         })}
@@ -64,7 +67,7 @@ export function CityServicePage({ cs }: { cs: CityService }) {
       <Section>
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow={`${label} ${cs.name}`} title={`${cs.name} Designed for ${label}`} />
-          <Prose paragraphs={cs.intro} />
+          <Prose paragraphs={cs.intro} linker={linker} />
         </div>
       </Section>
 
@@ -72,7 +75,7 @@ export function CityServicePage({ cs }: { cs: CityService }) {
         <Section key={s.heading} tone={i % 2 === 0 ? "light" : "dark"}>
           <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
             <SectionHeading tone={i % 2 === 0 ? "light" : "dark"} title={s.heading} />
-            <Prose tone={i % 2 === 0 ? "light" : "dark"} paragraphs={s.paragraphs} />
+            <Prose tone={i % 2 === 0 ? "light" : "dark"} paragraphs={s.paragraphs} linker={linker} />
           </div>
         </Section>
       ))}
@@ -101,7 +104,7 @@ export function CityServicePage({ cs }: { cs: CityService }) {
 
       <Section tone="light">
         <SectionHeading tone="light" eyebrow="FAQs" title={`${cs.name} FAQs for ${label}`} />
-        <div className="max-w-4xl"><FAQAccordion faqs={cs.faqs} /></div>
+        <div className="max-w-4xl"><FAQAccordion faqs={cs.faqs} linker={linker} /></div>
       </Section>
 
       <Section>
@@ -117,13 +120,29 @@ export function CityServicePage({ cs }: { cs: CityService }) {
           <div>
             <h2 className="text-xl font-semibold text-white">Related</h2>
             <ul className="mt-3 space-y-1">
-              <li><CardLink href={cs.parentPath}>About {cs.name.toLowerCase()}</CardLink></li>
+              <li><CardLink href={cs.parentPath}>{routeInfo(cs.parentPath).title.split(" | ")[0]}</CardLink></li>
               {otherCity.map((x) => <li key={x.city}><CardLink href={paths.cityService(x)}>{x.name} in {cityLabel(getCity(x.city)!)}</CardLink></li>)}
               <li><Link href="/get-a-quote/" className="inline-flex min-h-11 items-center text-sm font-semibold text-zia">Request a free quote →</Link></li>
             </ul>
           </div>
         </div>
       </Section>
+
+      <RelatedLinks
+        title={`More ${label} Lighting Resources`}
+        groups={[
+          { heading: `Other Services in ${label}`, links: popularServiceLinks(city.slug).filter((l) => l.href !== path).slice(0, 6) },
+          {
+            heading: city.slug === "albuquerque" ? "Albuquerque Neighborhoods" : "Nearby Areas",
+            links:
+              city.slug === "albuquerque"
+                ? neighborhoodLinks({ only: ["northeast-heights", "nob-hill", "four-hills", "sandia-heights", "westside-ventana-ranch", "taylor-ranch"] }).map((l) => ({ ...l, label: l.label.replace("permanent lighting", cs.name) }))
+                : city.nearby.map((s) => ({ href: paths.city(s), label: `Permanent lighting in ${cityLabel(getCity(s)!)}` })),
+          },
+          { heading: "Holiday & Event Lighting", links: localHolidayLinks().slice(0, 5) },
+          { heading: "Guides", links: postLinks(relatedPosts({ service: cs.parentPath, city: city.slug })) },
+        ]}
+      />
 
       <CTABand title={`Ready for ${cs.name} in ${label}?`} />
     </>

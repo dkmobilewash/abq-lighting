@@ -5,9 +5,14 @@ import { cityServices } from "@/data/cityServices";
 import { smartFeatures, systemFeatures } from "@/data/features";
 import { neighborhoods } from "@/data/neighborhoods";
 import type { City } from "@/data/types";
+import { cityHeroImages } from "@/data/pageImages";
 import { paths } from "@/lib/routes";
-import { faqNode, pageGraph, type Crumb } from "@/lib/schema";
+import { cityNode, faqNode, pageGraph, serviceNode, type Crumb } from "@/lib/schema";
+import { absoluteUrl } from "@/lib/seo";
 import { routeInfo } from "@/lib/routes";
+import { Linker } from "@/lib/linker";
+import { applicationLinks, localHolidayLinks, localOverrides, neighborhoodLinks, popularServiceLinks, postLinks, relatedPosts } from "@/lib/related";
+import { RelatedLinks } from "../RelatedLinks";
 import { AppSection } from "../AppSection";
 import { BeforeAfterSlider } from "../BeforeAfterSlider";
 import { Breadcrumbs } from "../Breadcrumbs";
@@ -23,18 +28,6 @@ import { ServiceCards } from "../ServiceCards";
 import { ZipGrid } from "../ZipGrid";
 import { CardLink, Prose, Section, SectionHeading } from "../ui";
 
-const heroImages: Partial<Record<City["slug"], { src: string; alt: string }>> = {
-  "rio-rancho": { src: "/images/placeholders/new-build-two-story-night.jpg", alt: "Two-story stucco home in Rio Rancho with permanent roofline lighting at night" },
-  "sandia-park-cedar-crest": { src: "/images/placeholders/mountain-home-night.jpg", alt: "East Mountains home in Cedar Crest with warm white permanent lights along a pitched metal roof" },
-  tijeras: { src: "/images/placeholders/mountain-home-night.jpg", alt: "Mountain home near Tijeras with permanent roofline lighting" },
-  corrales: { src: "/images/placeholders/valley-adobe-night.jpg", alt: "Adobe home in Corrales with warm permanent lights along the parapet" },
-  "north-valley": { src: "/images/placeholders/valley-adobe-night.jpg", alt: "North Valley adobe home with permanent warm white lighting" },
-  "south-valley": { src: "/images/placeholders/valley-adobe-night.jpg", alt: "South Valley adobe home with permanent warm lighting along the roofline" },
-  "los-ranchos-de-albuquerque": { src: "/images/placeholders/territorial-home-warm-white.jpg", alt: "Territorial-style home in Los Ranchos de Albuquerque with permanent warm white lights" },
-  edgewood: { src: "/images/placeholders/ranch-home-night.jpg", alt: "Ranch home in Edgewood with permanent roofline lighting" },
-  belen: { src: "/images/placeholders/ranch-home-night.jpg", alt: "Ranch-style home in Belen with permanent roofline lights at night" },
-  "los-lunas": { src: "/images/placeholders/new-build-two-story-night.jpg", alt: "Newer two-story home in Los Lunas with permanent roofline lighting" },
-};
 
 export function CityPage({ city }: { city: City }) {
   const label = cityLabel(city);
@@ -48,12 +41,27 @@ export function CityPage({ city }: { city: City }) {
   const nearby = city.nearby.map((s) => getCity(s)).filter((c): c is City => Boolean(c));
   const matrix = cityServices.filter((cs) => cs.city === city.slug);
   const localLinks = Object.fromEntries(matrix.map((cs) => [cs.service, paths.cityService(cs)]));
-  const hero = heroImages[city.slug] ?? { src: "/images/hero-albuquerque-stucco-home-night.jpg", alt: `Home in ${label}, New Mexico with permanent outdoor lighting at night` };
+  const hero = cityHeroImages[city.slug] ?? { src: "/images/hero-albuquerque-stucco-home-night.jpg", alt: `Home in ${label}, New Mexico with permanent outdoor lighting at night` };
   const neighborhoodSlugs = new Set(neighborhoods.map((n) => n.slug));
+  const linker = new Linker(path, { overrides: localOverrides(city.slug) });
+  const popular = popularServiceLinks(city.slug);
+  const posts = relatedPosts({ city: city.slug });
+  const listedNeighborhoods = new Set(city.areas.places.map((p) => p.neighborhoodSlug).filter(Boolean));
 
   return (
     <>
-      <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs, localBusiness: true, extra: [faqNode(path, city.faqs)] })} />
+      <JsonLd
+        data={pageGraph({
+          path, title: info.title, description: info.description, crumbs, localBusiness: true, catalog: true,
+          place: `${absoluteUrl(path)}#place`,
+          mainEntity: `${absoluteUrl(path)}#service`,
+          extra: [
+            cityNode(city),
+            serviceNode({ path, name: `Permanent Outdoor Lighting in ${label}, NM`, serviceType: "Permanent outdoor LED lighting installation", description: info.description, areaId: `${absoluteUrl(path)}#place` }),
+            faqNode(path, city.faqs),
+          ],
+        })}
+      />
 
       {/* 1. Hero */}
       <Hero
@@ -74,7 +82,7 @@ export function CityPage({ city }: { city: City }) {
       <Section>
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow={`${label} Permanent Lighting`} title={`Transform Your ${label} Home with Smart Permanent Lighting`} />
-          <Prose paragraphs={city.intro} />
+          <Prose paragraphs={city.intro} linker={linker} />
         </div>
       </Section>
 
@@ -82,13 +90,13 @@ export function CityPage({ city }: { city: City }) {
       <Section tone="light">
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading tone="light" eyebrow="Built for New Mexico" title={`Permanent Lighting Built for ${label} Homes`} />
-          <Prose tone="light" paragraphs={city.homes} />
+          <Prose tone="light" paragraphs={city.homes} linker={linker} />
         </div>
       </Section>
 
       {/* 5. Areas */}
       <Section>
-        <SectionHeading eyebrow={`Serving ${label}, NM`} title={`Areas We Serve Across ${label}`} intro={city.areas.intro} />
+        <SectionHeading eyebrow={`Serving ${label}, NM`} title={`Areas We Serve Across ${label}`} intro={linker.link(city.areas.intro)} />
         <ul className="flex flex-wrap gap-3">
           {city.areas.places.map((p) => {
             const href = p.neighborhoodSlug && neighborhoodSlugs.has(p.neighborhoodSlug) ? paths.neighborhood(p.neighborhoodSlug) : undefined;
@@ -103,6 +111,18 @@ export function CityPage({ city }: { city: City }) {
             );
           })}
         </ul>
+        {city.slug === "albuquerque" && (
+          <>
+            <h3 className="mt-10 text-lg font-semibold text-white">More Albuquerque neighborhoods</h3>
+            <ul className="mt-4 flex flex-wrap gap-3">
+              {neighborhoods.filter((n) => !listedNeighborhoods.has(n.slug)).map((n) => (
+                <li key={n.slug}>
+                  <Link href={paths.neighborhood(n.slug)} className="inline-flex min-h-11 items-center rounded-full border border-cyan/40 bg-cyan/10 px-4 text-sm font-medium text-cyan hover:border-zia hover:text-zia">{n.name}</Link>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
         <h3 className="mt-10 text-lg font-semibold text-white">Nearby communities we also serve</h3>
         <ul className="mt-4 flex flex-wrap gap-3">
           {nearby.map((c) => (
@@ -122,7 +142,17 @@ export function CityPage({ city }: { city: City }) {
       <Section tone="panel">
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow="Year-Round Scheduling" title={`Lighting Made for the Way ${label} Lives Outdoors`} />
-          <Prose paragraphs={city.lifestyle} />
+          <div>
+            <Prose paragraphs={city.lifestyle} linker={linker} />
+            <h3 className="mt-8 font-semibold text-white">Popular scenes in {label}</h3>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {localHolidayLinks().map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="inline-flex min-h-11 items-center rounded-full border border-zia/30 bg-night px-4 text-sm text-slate-200 hover:border-chile hover:text-zia">{l.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </Section>
 
@@ -131,7 +161,7 @@ export function CityPage({ city }: { city: City }) {
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading tone="light" eyebrow="Local Crew" title={`A Local ${label} Installer You Can Count On`} />
           <div>
-            <Prose tone="light" paragraphs={city.localInstaller} />
+            <Prose tone="light" paragraphs={city.localInstaller} linker={linker} />
             <p className="mt-4 text-sm text-slate-600">Licensed &amp; insured · NM License {business.licenseNumber}</p>
           </div>
         </div>
@@ -176,21 +206,14 @@ export function CityPage({ city }: { city: City }) {
       <Section tone="panel">
         <SectionHeading eyebrow="Lighting Services" title={`One System for Every Surface of Your ${label} Property`} />
         <ServiceCards blurbs={city.serviceBlurbs} localLinks={localLinks} cityName={label} />
-        <p className="mt-8 text-slate-400">
-          Also see <Link className="text-cyan hover:text-zia" href="/security-accent-lighting/">security &amp; accent lighting</Link>,{" "}
-          <Link className="text-cyan hover:text-zia" href="/permanent-holiday-lights/christmas-lights/">permanent Christmas lights</Link> and{" "}
-          <Link className="text-cyan hover:text-zia" href="/commercial-permanent-lighting/">commercial lighting</Link>.
-        </p>
-        {matrix.length > 0 && (
-          <div className="mt-8">
-            <h3 className="font-semibold text-white">{label} lighting guides</h3>
-            <ul className="mt-3 flex flex-wrap gap-x-6">
-              {matrix.map((cs) => (
-                <li key={cs.service}><CardLink href={paths.cityService(cs)}>{cs.name} in {label}</CardLink></li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div className="mt-12">
+          <h3 className="text-xl font-semibold text-white">Popular Permanent Lighting Services in {label}</h3>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {popular.map((l) => (
+              <li key={l.label}><CardLink href={l.href}>{l.label}</CardLink></li>
+            ))}
+          </ul>
+        </div>
       </Section>
 
       {/* 14. App */}
@@ -220,8 +243,25 @@ export function CityPage({ city }: { city: City }) {
       {/* 17. FAQ */}
       <Section tone="light" className="pt-0 sm:pt-0">
         <SectionHeading tone="light" eyebrow="FAQs" title={`Permanent Lighting FAQs for ${label}`} />
-        <div className="max-w-4xl"><FAQAccordion faqs={city.faqs} /></div>
+        <div className="max-w-4xl"><FAQAccordion faqs={city.faqs} linker={linker} /></div>
       </Section>
+
+      <RelatedLinks
+        title={`Explore Permanent Lighting in ${label}`}
+        groups={[
+          { heading: `Services in ${label}`, links: popular.slice(0, 6) },
+          {
+            heading: "Nearby Areas",
+            links: [
+              ...nearby.map((c) => ({ href: paths.city(c.slug), label: `Permanent lighting in ${cityLabel(c)}` })),
+              ...(city.slug === "albuquerque" ? neighborhoodLinks({ only: ["northeast-heights", "nob-hill", "four-hills"] }) : []),
+              { href: "/service-areas/", label: "All service areas" },
+            ],
+          },
+          { heading: "Holiday & Event Lighting", links: localHolidayLinks().slice(0, 5) },
+          { heading: "Guides & Applications", links: [...postLinks(posts), ...applicationLinks().filter((l) => l.href !== "/restaurant-and-retail-lighting/" && l.href !== "/car-dealership-lighting/")] },
+        ]}
+      />
 
       {/* 18. CTA */}
       <CTABand title={`Ready to Light Up Your ${label} Home?`} />

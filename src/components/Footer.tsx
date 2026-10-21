@@ -4,6 +4,8 @@ import { business, hoursDisplay, telHref } from "@/data/business";
 import { cities, cityLabel } from "@/data/cities";
 import { holidaysOrdered } from "@/data/nav";
 import { services } from "@/data/services";
+import { cityServices } from "@/data/cityServices";
+import { neighborhoods } from "@/data/neighborhoods";
 import { Logo } from "./Logo";
 
 const company = [
@@ -17,6 +19,7 @@ const company = [
   { label: "Contact", href: "/contact-us/" },
   { label: "Privacy Policy", href: "/privacy-policy/" },
   { label: "Terms & Conditions", href: "/terms-and-conditions/" },
+  { label: "Site Map", href: "/site-map/" },
 ];
 
 const socialIcons: Record<string, string> = {
@@ -51,6 +54,32 @@ export function Footer() {
         <Col title="Holiday Lights" links={[{ label: "All Holiday Lights", href: "/permanent-holiday-lights/" }, ...holidaysOrdered.map((h) => ({ label: h.navLabel, href: `/permanent-holiday-lights/${h.slug}/` }))]} />
         <Col title="Service Areas" links={[{ label: "All Service Areas", href: "/service-areas/" }, ...cities.map((c) => ({ label: cityLabel(c), href: `/service-areas/${c.slug}/` }))]} />
         <Col title="Company" links={company} />
+      </div>
+      <div className="border-t border-line">
+        <div className="container-x grid gap-8 py-10 lg:grid-cols-2">
+          <div>
+            <h2 className="font-heading text-sm font-semibold uppercase tracking-[0.16em] text-zia">Popular Local Services</h2>
+            <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+              {cityServices.map((cs) => (
+                <li key={cs.city + cs.service}>
+                  <Link href={`/service-areas/${cs.city}/${cs.service}/`} className="inline-flex min-h-9 items-center text-sm text-slate-400 hover:text-cyan">
+                    {cs.name} in {cityLabel(cities.find((c) => c.slug === cs.city)!)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2 className="font-heading text-sm font-semibold uppercase tracking-[0.16em] text-zia">Albuquerque Neighborhoods</h2>
+            <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+              {neighborhoods.map((n) => (
+                <li key={n.slug}>
+                  <Link href={`/service-areas/albuquerque/${n.slug}/`} className="inline-flex min-h-9 items-center text-sm text-slate-400 hover:text-cyan">{n.name}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
       <div className="border-t border-line">
         <div className="container-x flex flex-col gap-8 py-10 lg:flex-row lg:items-start lg:justify-between">

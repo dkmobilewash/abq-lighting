@@ -1,3 +1,5 @@
+import { SiteRelated } from "@/components/RelatedLinks";
+import { Linker } from "@/lib/linker";
 import { AppSection } from "@/components/AppSection";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CTABand } from "@/components/CTABand";
@@ -19,6 +21,7 @@ export default function Page() {
   const info = routeInfo(path);
   const crumbs = [{ name: "Home", path: "/" }, { name: "Smart App", path }];
   const faqs = faqGroups.find((g) => g.slug === "app")?.faqs ?? [];
+  const linker = new Linker(path);
   return (
     <>
       <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs, extra: faqs.length ? [faqNode(path, faqs)] : [] })} />
@@ -32,7 +35,7 @@ export default function Page() {
       <Section tone="light">
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading tone="light" eyebrow="A Year in the App" title="Set Your Calendar Once" />
-          <Prose tone="light" paragraphs={[
+          <Prose tone="light" linker={linker} paragraphs={[
             "Most of our customers load their year in one sitting: Valentine's red in February, green for St. Patrick's Day, red, white and blue for the Fourth, a rainbow for Balloon Fiesta week, orange and purple for Halloween, and the Christmas scene from Thanksgiving through Three Kings Day.",
             "Between holidays, a warm white scene runs on a sunset-to-sunrise timer that shifts with the seasons, so your home looks finished every night without anyone touching a switch.",
             "Want something spontaneous? Open the app, pick a color and go. Anyone you share access with can do the same.",
@@ -47,9 +50,10 @@ export default function Page() {
       {faqs.length > 0 && (
         <Section tone="light">
           <SectionHeading tone="light" eyebrow="FAQs" title="App & Control Questions" />
-          <div className="max-w-4xl"><FAQAccordion faqs={faqs} /></div>
+          <div className="max-w-4xl"><FAQAccordion faqs={faqs} linker={linker} /></div>
         </Section>
       )}
+      <SiteRelated current={path} />
       <CTABand title="See the App in Action on Your Home" />
     </>
   );

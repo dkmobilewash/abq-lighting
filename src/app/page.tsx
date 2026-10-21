@@ -25,7 +25,10 @@ import { posts } from "@/data/posts";
 import { processSteps } from "@/data/process";
 import { metaFor } from "@/lib/page";
 import { paths, routeInfo } from "@/lib/routes";
-import { faqNode, pageGraph } from "@/lib/schema";
+import { faqNode, pageGraph, siteNavigationNode } from "@/lib/schema";
+import { mainNav, simpleNav } from "@/data/nav";
+import { Linker } from "@/lib/linker";
+import { localOverrides, popularServiceLinks } from "@/lib/related";
 
 export const metadata = metaFor("/");
 
@@ -34,10 +37,11 @@ const topApps = ["residential-permanent-lighting", "commercial-permanent-lightin
 export default function Home() {
   const info = routeInfo("/");
   const counties = [...new Set(cities.map((c) => c.county))];
+  const linker = new Linker("/", { overrides: localOverrides("albuquerque"), maxPerParagraph: 3 }).exclude("/permanent-outdoor-lighting/");
 
   return (
     <>
-      <JsonLd data={pageGraph({ path: "/", title: info.title, description: info.description, localBusiness: true, extra: [faqNode("/", homeFaqs)] })} />
+      <JsonLd data={pageGraph({ path: "/", title: info.title, description: info.description, localBusiness: true, catalog: true, extra: [siteNavigationNode([...mainNav.map((g) => ({ name: g.label, path: g.href })), ...simpleNav.map((l) => ({ name: l.label, path: l.href })), { name: "Get a Free Quote", path: "/get-a-quote/" }]), faqNode("/", homeFaqs)] })} />
 
       <Hero
         eyebrow="Serving Albuquerque, New Mexico"
@@ -68,7 +72,7 @@ export default function Home() {
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow="Permanent Lighting Albuquerque" title="Smart LED Roofline Lights That Stay Up Year-Round" />
           <div>
-            <Prose paragraphs={[
+            <Prose linker={linker} paragraphs={[
               "Permanent lighting is a slim, color-matched track installed once along your roofline, parapets or walls, with individually controllable LEDs tucked inside. By day it blends into your fascia or stucco. At night it becomes whatever you want: a soft warm white for everyday curb appeal, or full color for every holiday on the calendar.",
               "Everything runs from an app on your phone. Schedule red and green from Thanksgiving to Three Kings Day, cherry and silver for Lobos game nights, a sunrise rainbow for Balloon Fiesta week and amber on Christmas Eve, then let your lights switch themselves at dusk and dawn. No ladders, no tangled strands, no January takedown.",
               "We're a local Albuquerque crew, and we design for the homes here: stucco parapets, flat roofs with canales, Territorial brick coping, pitched tile and metal roofs, and the HOA guidelines that come with many planned communities.",
@@ -95,6 +99,14 @@ export default function Home() {
       <Section tone="panel">
         <SectionHeading eyebrow="Lighting Services" title="One System for Every Surface of Your Albuquerque Property" />
         <ServiceCards includeSecurity />
+        <div className="mt-12">
+          <h3 className="text-xl font-semibold text-white">Popular Permanent Lighting Services in Albuquerque</h3>
+          <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {popularServiceLinks("albuquerque").map((l) => (
+              <li key={l.label}><CardLink href={l.href}>{l.label}</CardLink></li>
+            ))}
+          </ul>
+        </div>
       </Section>
 
       <Section>
@@ -204,7 +216,7 @@ export default function Home() {
 
       <Section tone="light" className="pt-0 sm:pt-0">
         <SectionHeading tone="light" eyebrow="FAQs" title="Permanent Lighting FAQs for Albuquerque" />
-        <div className="max-w-4xl"><FAQAccordion faqs={homeFaqs} /></div>
+        <div className="max-w-4xl"><FAQAccordion faqs={homeFaqs} linker={linker} /></div>
         <Link href="/faqs/" className="mt-6 inline-flex min-h-11 items-center font-semibold text-chile hover:underline">See all FAQs →</Link>
       </Section>
 

@@ -11,6 +11,9 @@ import { pillar } from "@/data/pillar";
 import { metaFor } from "@/lib/page";
 import { routeInfo } from "@/lib/routes";
 import { faqNode, pageGraph, serviceNode } from "@/lib/schema";
+import { Linker } from "@/lib/linker";
+import { RelatedLinks } from "@/components/RelatedLinks";
+import { applicationLinks, cityLinks, localHolidayLinks, postLinks, relatedPosts, topCityOrder } from "@/lib/related";
 
 const path = "/permanent-outdoor-lighting/";
 export const metadata = metaFor(path);
@@ -19,6 +22,7 @@ export default function Page() {
   const info = routeInfo(path);
   const crumbs = [{ name: "Home", path: "/" }, { name: "Permanent Outdoor Lighting", path }];
   const [first, second, comparison, ...rest] = pillar.sections;
+  const linker = new Linker(path, { maxPerPage: 20 });
   return (
     <>
       <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs, extra: [serviceNode({ path, name: "Permanent Outdoor Lighting", serviceType: "Permanent outdoor LED lighting installation", description: info.description }), faqNode(path, pillar.faqs)] })} />
@@ -42,14 +46,14 @@ export default function Page() {
       <Section id={first.id}>
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading title={first.heading} />
-          <Prose paragraphs={first.paragraphs} />
+          <Prose paragraphs={first.paragraphs} linker={linker} />
         </div>
       </Section>
 
       <Section tone="panel" id={second.id}>
         <SectionHeading title={second.heading} />
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
-          <Prose paragraphs={second.paragraphs} />
+          <Prose paragraphs={second.paragraphs} linker={linker} />
           <FeatureGrid cols={2} items={pillar.howItWorks.map((p, i) => ({ ...p, icon: (["ruler", "sparkles", "zap", "smartphone"] as const)[i % 4] }))} />
         </div>
       </Section>
@@ -57,7 +61,7 @@ export default function Page() {
       <Section tone="light" id={comparison.id}>
         <SectionHeading tone="light" title={comparison.heading} />
         <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
-          <Prose tone="light" paragraphs={comparison.paragraphs} />
+          <Prose tone="light" paragraphs={comparison.paragraphs} linker={linker} />
           <div className="overflow-x-auto">
             <table className="w-full min-w-[32rem] border-collapse overflow-hidden rounded-2xl bg-white text-left text-sm">
               <caption className="sr-only">Permanent vs. traditional Christmas lights</caption>
@@ -84,7 +88,7 @@ export default function Page() {
 
       <Section id="cost-factors">
         <SectionHeading eyebrow="Permanent Lighting Cost" title="What Affects the Cost of Permanent Lighting?" intro="Every home is different, so we quote each project individually. These are the factors that move the number." />
-        <FeatureGrid items={pillar.costFactors.map((p, i) => ({ ...p, icon: (["ruler", "home", "layers", "zap", "hammer", "palette", "mountain", "wrench"] as const)[i % 8] }))} />
+        <FeatureGrid linker={linker} items={pillar.costFactors.map((p, i) => ({ ...p, icon: (["ruler", "home", "layers", "zap", "hammer", "palette", "mountain", "wrench"] as const)[i % 8] }))} />
         <p className="mt-8 text-slate-400">Want a real number for your home? <Link href="/get-a-quote/" className="font-semibold text-cyan hover:text-zia">Request a free quote</Link>.</p>
       </Section>
 
@@ -92,7 +96,7 @@ export default function Page() {
         <Section key={s.id} id={s.id} tone={i % 2 === 0 ? "panel" : "dark"}>
           <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
             <SectionHeading title={s.heading} />
-            <Prose paragraphs={s.paragraphs} />
+            <Prose paragraphs={s.paragraphs} linker={linker} />
           </div>
         </Section>
       ))}
@@ -104,8 +108,18 @@ export default function Page() {
 
       <Section tone="light">
         <SectionHeading tone="light" eyebrow="FAQs" title="Permanent Outdoor Lighting FAQs" />
-        <div className="max-w-4xl"><FAQAccordion faqs={pillar.faqs} /></div>
+        <div className="max-w-4xl"><FAQAccordion faqs={pillar.faqs} linker={linker} /></div>
       </Section>
+
+      <RelatedLinks
+        title="Explore Permanent Lighting"
+        groups={[
+          { heading: "Homes & Businesses", links: applicationLinks() },
+          { heading: "Holiday & Event Lighting", links: localHolidayLinks() },
+          { heading: "Service Areas", links: cityLinks({ only: topCityOrder.slice(0, 7) }) },
+          { heading: "Guides", links: postLinks(relatedPosts({ service: path, limit: 4 })) },
+        ]}
+      />
 
       <CTABand title="See What Permanent Lighting Looks Like on Your Home" />
     </>

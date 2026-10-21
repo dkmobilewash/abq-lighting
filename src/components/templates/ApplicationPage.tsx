@@ -3,7 +3,12 @@ import { applications } from "@/data/applications";
 import { cities, cityLabel } from "@/data/cities";
 import type { Application } from "@/data/types";
 import { paths, routeInfo } from "@/lib/routes";
+import { Linker } from "@/lib/linker";
+import { cityServices } from "@/data/cityServices";
+import { localHolidayLinks, postLinks, relatedPosts, serviceLinks, topCityOrder } from "@/lib/related";
+import { RelatedLinks } from "../RelatedLinks";
 import { faqNode, pageGraph, serviceNode, type Crumb } from "@/lib/schema";
+import { absoluteUrl } from "@/lib/seo";
 import { Breadcrumbs } from "../Breadcrumbs";
 import { CTABand } from "../CTABand";
 import { FAQAccordion } from "../FAQAccordion";
@@ -23,12 +28,16 @@ export function ApplicationPage({ a }: { a: Application }) {
     { name: a.shortName, path },
   ];
   const related = applications.filter((x) => x.slug !== a.slug);
+  const linker = new Linker(path);
+  const isCommercial = a.slug !== "residential-permanent-lighting";
+  const localCommercial = cityServices.filter((cs) => cs.service === "commercial-lighting");
 
   return (
     <>
       <JsonLd
         data={pageGraph({
           path, title: info.title, description: info.description, crumbs,
+          mainEntity: `${absoluteUrl(path)}#service`,
           extra: [serviceNode({ path, name: a.name, serviceType: a.primaryKeyword, description: a.metaDescription }), faqNode(path, a.faqs)],
         })}
       />
@@ -39,7 +48,7 @@ export function ApplicationPage({ a }: { a: Application }) {
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <div>
             <SectionHeading eyebrow={a.shortName} title={`${a.shortName} Lighting That Stays Up Year-Round`} />
-            <Prose paragraphs={a.intro} />
+            <Prose paragraphs={a.intro} linker={linker} />
           </div>
           <div className="glow relative aspect-[4/3]">
             <Image src={a.image} alt={a.imageAlt} fill sizes="(min-width: 1024px) 50vw, 100vw" className="rounded-2xl object-cover" />
@@ -49,12 +58,12 @@ export function ApplicationPage({ a }: { a: Application }) {
 
       <Section tone="light">
         <SectionHeading tone="light" eyebrow="The Problem" title="What Permanent Lighting Replaces" />
-        <FeatureGrid tone="light" items={a.painPoints.map((p, i) => ({ ...p, icon: (["hammer", "calendar", "wrench", "palette", "shield"] as const)[i % 5] }))} />
+        <FeatureGrid tone="light" linker={linker} items={a.painPoints.map((p, i) => ({ ...p, icon: (["hammer", "calendar", "wrench", "palette", "shield"] as const)[i % 5] }))} />
       </Section>
 
       <Section>
         <SectionHeading eyebrow="The Upside" title="Visibility, Curb Appeal & Simpler Seasons" />
-        <FeatureGrid items={a.benefits.map((b, i) => ({ ...b, icon: (["sparkles", "store", "smartphone", "zap", "users"] as const)[i % 5] }))} />
+        <FeatureGrid linker={linker} items={a.benefits.map((b, i) => ({ ...b, icon: (["sparkles", "store", "smartphone", "zap", "users"] as const)[i % 5] }))} />
       </Section>
 
       <Section tone="panel">
@@ -72,7 +81,7 @@ export function ApplicationPage({ a }: { a: Application }) {
 
       <Section tone="light">
         <SectionHeading tone="light" eyebrow="FAQs" title={`${a.shortName} Lighting FAQs`} />
-        <div className="max-w-4xl"><FAQAccordion faqs={a.faqs} /></div>
+        <div className="max-w-4xl"><FAQAccordion faqs={a.faqs} linker={linker} /></div>
       </Section>
 
       <Section>
@@ -90,6 +99,23 @@ export function ApplicationPage({ a }: { a: Application }) {
           </div>
         </div>
       </Section>
+
+      <RelatedLinks
+        tone="light"
+        title={`More ${a.shortName} Lighting Resources`}
+        groups={[
+          { heading: "Lighting Services", links: serviceLinks() },
+          {
+            heading: isCommercial ? "Commercial Lighting by City" : "Residential Lighting by City",
+            links: [
+              ...(isCommercial ? localCommercial.map((cs) => ({ href: paths.cityService(cs), label: `Commercial permanent lighting in ${cityLabel(cities.find((c) => c.slug === cs.city)!)}` })) : []),
+              ...topCityOrder.slice(isCommercial ? 2 : 0, isCommercial ? 6 : 6).map((s) => ({ href: paths.city(s), label: `${isCommercial ? "Business" : "Home"} lighting in ${cityLabel(cities.find((c) => c.slug === s)!)}` })),
+            ],
+          },
+          { heading: isCommercial ? "Seasonal & Event Scenes" : "Holiday & Event Lighting", links: localHolidayLinks().slice(0, 5) },
+          { heading: "Guides", links: postLinks(relatedPosts({ service: path })) },
+        ]}
+      />
 
       <CTABand title={a.parent || a.slug !== "residential-permanent-lighting" ? "Schedule a Free Site Walk" : "Ready to Light Up Your Home?"} primaryLabel={a.ctaLabel} />
     </>

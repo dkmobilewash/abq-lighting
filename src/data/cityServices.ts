@@ -12,10 +12,11 @@ export const cityServices: CityService[] = [
   {
     city: "albuquerque",
     service: "permanent-christmas-lights",
-    name: "Permanent Christmas Lights",
+    // Distinct intent from /permanent-holiday-lights/christmas-lights/ ("permanent Christmas lights Albuquerque").
+    name: "Christmas Light Installation",
     parentPath: "/permanent-holiday-lights/christmas-lights/",
     metaDescription:
-      "Permanent Christmas lights in Albuquerque, NM. App-controlled LEDs on your roofline, no ladders or storage bins. Glow on schedule every December.",
+      "Christmas light installation in Albuquerque, done once. A local crew installs permanent, app-controlled LEDs from the Heights to the Westside. Free quote.",
     heroSubhead:
       "Skip the December ladder climb: a hidden track along your Albuquerque roofline lights up for Christmas, Christmas Eve and every night in between.",
     intro: [
@@ -72,10 +73,11 @@ export const cityServices: CityService[] = [
   {
     city: "albuquerque",
     service: "roofline-lighting",
-    name: "Roofline Lighting",
+    // Distinct intent from /roofline-lighting/ (the service page): installation across ABQ neighborhoods.
+    name: "Roofline Light Installation",
     parentPath: "/roofline-lighting/",
     metaDescription:
-      "Roofline lighting in Albuquerque, NM: low-profile permanent LED track for stucco, parapets and pitched roofs. Warm white daily, colors on demand.",
+      "Roofline light installation across Albuquerque, from Ridgecrest parapets to Westside two-stories. Hidden track, warm white daily, colors on demand.",
     heroSubhead:
       "A permanent LED roofline that disappears by day and frames your Albuquerque home every night, from Nob Hill parapets to Northeast Heights eaves.",
     intro: [
@@ -132,10 +134,11 @@ export const cityServices: CityService[] = [
   {
     city: "albuquerque",
     service: "landscape-lighting",
-    name: "Landscape Lighting",
+    // Distinct intent from /landscape-lighting/ (the service page): installation in ABQ yards.
+    name: "Landscape Lighting Installation",
     parentPath: "/landscape-lighting/",
     metaDescription:
-      "Landscape lighting in Albuquerque, NM for xeriscape yards, block walls, portals and trees. App-controlled LEDs built for high-desert sun and monsoons.",
+      "Landscape lighting installation for Albuquerque xeriscape yards, block walls and portals, with app-controlled LEDs made for desert sun and monsoons.",
     heroSubhead:
       "Bring your Albuquerque xeriscape, block walls and portal to life after dark with app-controlled LED landscape lighting made for the high desert.",
     intro: [
@@ -192,10 +195,11 @@ export const cityServices: CityService[] = [
   {
     city: "albuquerque",
     service: "commercial-lighting",
-    name: "Commercial Permanent Lighting",
+    // Distinct intent from /commercial-permanent-lighting/ ("commercial Christmas lighting Albuquerque").
+    name: "Storefront & Building Lighting",
     parentPath: "/commercial-permanent-lighting/",
     metaDescription:
-      "Commercial permanent lighting in Albuquerque, NM for storefronts, restaurants, offices and dealerships. Brand colors, smart schedules, no lift rentals.",
+      "Storefront and building outline lighting for Albuquerque businesses on Central, Coors, Montgomery and Paseo. Brand colors, set schedules, no lift rentals.",
     heroSubhead:
       "Permanent LED lighting for Albuquerque businesses, from Nob Hill storefronts to Journal Center offices, run from one app in your brand colors.",
     intro: [

@@ -4,13 +4,15 @@ import { CTABand } from "@/components/CTABand";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { ServiceAreaMap } from "@/components/ServiceAreaMap";
-import { Section, SectionHeading } from "@/components/ui";
+import { Prose, Section, SectionHeading } from "@/components/ui";
+import { SiteRelated } from "@/components/RelatedLinks";
+import { Linker } from "@/lib/linker";
 import { cities, cityLabel } from "@/data/cities";
 import { cityServices } from "@/data/cityServices";
 import { neighborhoods } from "@/data/neighborhoods";
 import { metaFor } from "@/lib/page";
 import { paths, routeInfo } from "@/lib/routes";
-import { pageGraph } from "@/lib/schema";
+import { itemListNode, pageGraph } from "@/lib/schema";
 
 const path = "/service-areas/";
 export const metadata = metaFor(path);
@@ -19,10 +21,11 @@ export default function Page() {
   const info = routeInfo(path);
   const crumbs = [{ name: "Home", path: "/" }, { name: "Service Areas", path }];
   const counties = [...new Set(cities.map((c) => c.county))];
+  const linker = new Linker(path).exclude(...cities.map((c) => paths.city(c.slug)), ...neighborhoods.map((n) => paths.neighborhood(n.slug)));
   const points = cities.map((c) => ({ name: cityLabel(c), href: paths.city(c.slug), lat: c.geo.lat, lng: c.geo.lng }));
   return (
     <>
-      <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs, localBusiness: true })} />
+      <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs, localBusiness: true, catalog: true, pageType: "CollectionPage", extra: [itemListNode(path, "Permanent lighting service areas", [...cities.map((c) => ({ name: `${cityLabel(c)}, NM`, path: paths.city(c.slug) })), ...neighborhoods.map((n) => ({ name: `${n.name}, Albuquerque`, path: paths.neighborhood(n.slug) }))])] })} />
       <PageHeader eyebrow="Service Areas" title="Permanent Lighting Across the Albuquerque Metro" intro="From the Westside mesa to the East Mountains and down the valley to Belen, our local crew installs permanent lighting throughout the Middle Rio Grande Valley." />
       <Breadcrumbs crumbs={crumbs} />
       <Section>
@@ -42,6 +45,19 @@ export default function Page() {
               </div>
             ))}
           </div>
+        </div>
+      </Section>
+      <Section tone="panel">
+        <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
+          <SectionHeading eyebrow="Coverage" title="Local Permanent Lighting Installation From Belen to Placitas" />
+          <Prose
+            linker={linker}
+            paragraphs={[
+              "Our crew is based in Albuquerque and installs permanent outdoor lighting across Bernalillo, Sandoval, Valencia and southern Santa Fe counties. That covers every Albuquerque neighborhood from the Northeast Heights to the Westside mesa, plus Rio Rancho, Corrales, Bernalillo and Placitas to the north, the East Mountains along the Turquoise Trail, and Los Lunas, Bosque Farms and Belen down the valley.",
+              "Each area brings its own mix of homes and weather. Valley properties tend toward adobe, Territorial and ranch styles under big cottonwoods. The Westside and Rio Rancho have newer two-story stucco builds, active HOAs and plenty of wind. The East Mountains add pitched metal roofs, snow and darker skies. We design every roofline lighting, parapet and landscape lighting layout around those details, not a one-size-fits-all kit.",
+              "Every city page below covers local home styles, the neighborhoods we serve, ZIP codes and answers to common questions for that community. Don't see your town? We regularly travel throughout central New Mexico, so ask us about your address when you request a free quote.",
+            ]}
+          />
         </div>
       </Section>
       <Section tone="light">
@@ -69,6 +85,7 @@ export default function Page() {
           ))}
         </ul>
       </Section>
+      <SiteRelated current={path} title="Explore Lighting Services Across the Metro" />
       <CTABand title="Don't See Your Area? Ask Us." body="We regularly travel throughout central New Mexico. Tell us where you are and we'll let you know if we can help." />
     </>
   );

@@ -5,5 +5,13 @@ import { buildMetadata } from "./seo";
 /** Metadata for a registered route (title/description live in lib/routes.ts). */
 export function metaFor(path: string, type: "website" | "article" = "website"): Metadata {
   const r = routeInfo(path);
-  return buildMetadata({ title: r.title, description: r.description, path: r.path, noindex: r.noindex, type });
+  return buildMetadata({
+    title: r.title,
+    description: r.description,
+    path: r.path,
+    noindex: r.noindex,
+    type,
+    image: r.image,
+    ...(type === "article" ? { publishedTime: r.lastModified, modifiedTime: r.lastModified } : {}),
+  });
 }

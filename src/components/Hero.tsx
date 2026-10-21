@@ -25,14 +25,15 @@ export function Hero({
 }) {
   return (
     <section className="relative isolate overflow-hidden">
-      <Image src={image} alt={imageAlt} fill priority quality={50} sizes="100vw" className="-z-20 object-cover" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-night via-night/85 to-night/40" aria-hidden="true" />
-      <div className="absolute inset-x-0 bottom-0 -z-10 h-32 bg-gradient-to-t from-night to-transparent" aria-hidden="true" />
+      <Image src={image} alt={imageAlt} fill loading="eager" fetchPriority="high" quality={50} sizes="100vw" className="-z-20 object-cover" />
+      {/* Mobile: even scrim so text over the photo stays readable. Desktop: scrim only behind the copy on the left. */}
+      <div className="absolute inset-0 -z-10 bg-night/55 lg:bg-transparent lg:bg-gradient-to-r lg:from-night/85 lg:via-night/40 lg:to-transparent" aria-hidden="true" />
+      <div className="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-night to-transparent" aria-hidden="true" />
       <div className={`container-x grid items-center gap-10 py-16 sm:py-24 ${form ? "lg:grid-cols-[1.15fr_1fr] lg:py-20" : "lg:py-28"}`}>
         <div>
           <Eyebrow>{eyebrow}</Eyebrow>
-          <h1 className="mt-5 text-4xl font-semibold leading-[1.08] text-white sm:text-5xl lg:text-6xl">{title}</h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-300 sm:text-xl">{subhead}</p>
+          <h1 className="mt-5 text-4xl font-semibold leading-[1.08] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)] sm:text-5xl lg:text-6xl">{title}</h1>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-100 drop-shadow-[0_1px_8px_rgba(0,0,0,0.7)] sm:text-xl">{subhead}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <QuoteButton label={primaryLabel} />
             <Button href={secondary.href} variant="secondary">{secondary.label}</Button>

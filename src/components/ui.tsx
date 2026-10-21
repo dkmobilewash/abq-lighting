@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowRight, Phone } from "lucide-react";
 import { business, telHref } from "@/data/business";
+import type { Linker } from "@/lib/linker";
 
 export function Eyebrow({ children, tone = "dark" }: { children: ReactNode; tone?: "dark" | "light" }) {
   return (
@@ -41,10 +42,10 @@ export function Section({
   );
 }
 
-export function Prose({ paragraphs, tone = "dark" }: { paragraphs: string[]; tone?: "dark" | "light" }) {
+export function Prose({ paragraphs, tone = "dark", linker }: { paragraphs: string[]; tone?: "dark" | "light"; linker?: Linker }) {
   return (
     <div className={`space-y-4 text-lg leading-relaxed ${tone === "dark" ? "text-slate-300" : "text-slate-700"}`}>
-      {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
+      {paragraphs.map((p, i) => <p key={i}>{linker ? linker.link(p) : p}</p>)}
     </div>
   );
 }

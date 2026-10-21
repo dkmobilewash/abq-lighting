@@ -36,16 +36,34 @@ type MetaInput = {
   path: string;
   noindex?: boolean;
   type?: "website" | "article";
+  /** Article dates (ISO) for og:article tags. */
+  publishedTime?: string;
+  modifiedTime?: string;
+  /** Primary page image, used as a secondary OG image after the generated card. */
+  image?: string;
 };
 
-export function buildMetadata({ title, description, path, noindex, type = "website" }: MetaInput): Metadata {
+/** Directives that let Google show large image previews and full snippets. */
+const indexable = {
+  index: true,
+  follow: true,
+  googleBot: { index: true, follow: true, "max-image-preview": "large" as const, "max-snippet": -1, "max-video-preview": -1 },
+};
+
+export function buildMetadata({ title, description, path, noindex, type = "website", publishedTime, modifiedTime, image }: MetaInput): Metadata {
   const desc = clamp(description, 155);
-  const image = { url: ogImagePath(path), width: 1200, height: 630, alt: title };
+  const ogCard = { url: ogImagePath(path), width: 1200, height: 630, alt: title, type: "image/png" };
+  const images = image ? [ogCard, { url: image, alt: title }] : [ogCard];
   return {
     title: { absolute: title },
     description: desc,
-    alternates: { canonical: path },
-    robots: noindex ? { index: false, follow: true } : undefined,
+    alternates: {
+      canonical: path,
+      // Single-language site: self-referencing hreflang + x-default.
+      languages: { "en-US": path, "x-default": path },
+      types: { "application/rss+xml": [{ url: "/blog/rss.xml", title: `${business.name} Blog` }] },
+    },
+    robots: noindex ? { index: false, follow: true, googleBot: { index: false, follow: true } } : indexable,
     openGraph: {
       type,
       url: path,
@@ -53,8 +71,9 @@ export function buildMetadata({ title, description, path, noindex, type = "websi
       description: desc,
       siteName: business.name,
       locale: "en_US",
-      images: [image],
+      images,
+      ...(type === "article" ? { publishedTime, modifiedTime: modifiedTime ?? publishedTime, authors: [business.name], section: "Permanent Lighting" } : {}),
     },
-    twitter: { card: "summary_large_image", title, description: desc, images: [image.url] },
+    twitter: { card: "summary_large_image", title, description: desc, images: [ogCard.url] },
   };
 }

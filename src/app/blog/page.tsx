@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SiteRelated } from "@/components/RelatedLinks";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CTABand } from "@/components/CTABand";
 import { JsonLd } from "@/components/JsonLd";
@@ -8,7 +9,7 @@ import { Section } from "@/components/ui";
 import { posts } from "@/data/posts";
 import { metaFor } from "@/lib/page";
 import { paths, routeInfo } from "@/lib/routes";
-import { pageGraph } from "@/lib/schema";
+import { itemListNode, pageGraph } from "@/lib/schema";
 
 const path = "/blog/";
 export const metadata = metaFor(path);
@@ -20,7 +21,7 @@ export default function Page() {
   const crumbs = [{ name: "Home", path: "/" }, { name: "Blog", path }];
   return (
     <>
-      <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs })} />
+      <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs, pageType: "CollectionPage", extra: [itemListNode(path, "Permanent lighting guides", posts.map((p) => ({ name: p.title, path: paths.post(p.slug) })))] })} />
       <PageHeader eyebrow="Blog" title="Permanent Lighting Guides & Ideas" intro="Costs, flat roofs, HOAs, New Mexico weather and holiday ideas, written for Albuquerque homeowners." />
       <Breadcrumbs crumbs={crumbs} />
       <Section>
@@ -39,6 +40,7 @@ export default function Page() {
           ))}
         </ul>
       </Section>
+      <SiteRelated current={path} />
       <CTABand title="Ready to Talk About Your Home?" />
     </>
   );

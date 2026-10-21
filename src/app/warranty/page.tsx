@@ -1,3 +1,5 @@
+import { SiteRelated } from "@/components/RelatedLinks";
+import { Linker } from "@/lib/linker";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CTABand } from "@/components/CTABand";
 import { FAQAccordion } from "@/components/FAQAccordion";
@@ -17,6 +19,7 @@ export default function Page() {
   const info = routeInfo(path);
   const crumbs = [{ name: "Home", path: "/" }, { name: "Warranty", path }];
   const faqs = faqGroups.find((g) => g.slug === "warranty")?.faqs ?? [];
+  const linker = new Linker(path);
   return (
     <>
       <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs, extra: faqs.length ? [faqNode(path, faqs)] : [] })} />
@@ -50,9 +53,10 @@ export default function Page() {
       {faqs.length > 0 && (
         <Section tone="light" className="pt-0 sm:pt-0">
           <SectionHeading tone="light" eyebrow="FAQs" title="Warranty & Service Questions" />
-          <div className="max-w-4xl"><FAQAccordion faqs={faqs} /></div>
+          <div className="max-w-4xl"><FAQAccordion faqs={faqs} linker={linker} /></div>
         </Section>
       )}
+      <SiteRelated current={path} />
       <CTABand title="Lighting That's Built to Last, Backed Locally" />
     </>
   );

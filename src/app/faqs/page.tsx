@@ -1,3 +1,5 @@
+import { SiteRelated } from "@/components/RelatedLinks";
+import { Linker } from "@/lib/linker";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { CTABand } from "@/components/CTABand";
 import { FAQAccordion } from "@/components/FAQAccordion";
@@ -15,6 +17,7 @@ export const metadata = metaFor(path);
 export default function Page() {
   const info = routeInfo(path);
   const crumbs = [{ name: "Home", path: "/" }, { name: "FAQs", path }];
+  const linker = new Linker(path, { maxPerPage: 24, maxPerParagraph: 1 });
   return (
     <>
       <JsonLd data={pageGraph({ path, title: info.title, description: info.description, crumbs, extra: [faqNode(path, faqGroups.flatMap((g) => g.faqs))] })} />
@@ -32,11 +35,12 @@ export default function Page() {
           {faqGroups.map((g) => (
             <section key={g.slug} id={g.slug} aria-labelledby={`${g.slug}-h`} className="scroll-mt-28">
               <h2 id={`${g.slug}-h`} className="mb-6 text-2xl font-semibold text-ink sm:text-3xl">{g.heading}</h2>
-              <FAQAccordion faqs={g.faqs} />
+              <FAQAccordion faqs={g.faqs} linker={linker} />
             </section>
           ))}
         </div>
       </Section>
+      <SiteRelated current={path} />
       <CTABand title="Still Have Questions? Let's Talk." />
     </>
   );

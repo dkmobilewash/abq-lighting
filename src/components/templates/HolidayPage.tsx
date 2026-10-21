@@ -3,8 +3,13 @@ import { cities, cityLabel } from "@/data/cities";
 import { cityServices } from "@/data/cityServices";
 import { holidays } from "@/data/holidays";
 import type { Holiday } from "@/data/types";
+import { holidayImage } from "@/data/pageImages";
 import { holidayHubPath, paths, routeInfo } from "@/lib/routes";
+import { Linker } from "@/lib/linker";
+import { holidayServiceLinks, postLinks, relatedPosts, topCityOrder } from "@/lib/related";
+import { RelatedLinks } from "../RelatedLinks";
 import { faqNode, pageGraph, serviceNode, type Crumb } from "@/lib/schema";
+import { absoluteUrl } from "@/lib/seo";
 import { Breadcrumbs } from "../Breadcrumbs";
 import { CTABand } from "../CTABand";
 import { FAQAccordion } from "../FAQAccordion";
@@ -13,15 +18,6 @@ import { Hero } from "../Hero";
 import { JsonLd } from "../JsonLd";
 import { CardLink, Prose, Section, SectionHeading } from "../ui";
 
-const holidayImage: Record<string, string> = {
-  "christmas-lights": "christmas-roofline-colors",
-  "halloween-lights": "holiday-orange-purple",
-  "thanksgiving-lights": "holiday-orange-purple",
-  "luminaria-and-farolito-season": "luminaria-amber-glow",
-  "balloon-fiesta-lights": "balloon-fiesta-colors",
-  "game-day-lights": "game-day-red-silver",
-  "diwali-lights": "luminaria-amber-glow",
-};
 
 export function holidayH1(h: Holiday) {
   return h.h1 ?? `Permanent ${h.name} Lights in Albuquerque`;
@@ -37,7 +33,8 @@ export function HolidayPage({ h }: { h: Holiday }) {
   ];
   const christmas = holidays.find((x) => x.slug === "christmas-lights")!;
   const siblings = h.siblings.map((s) => holidays.find((x) => x.slug === s)).filter((x): x is Holiday => Boolean(x));
-  const image = `/images/placeholders/${holidayImage[h.slug] ?? "christmas-roofline-colors"}.jpg`;
+  const image = holidayImage(h.slug);
+  const linker = new Linker(path).exclude(holidayHubPath, paths.holiday(christmas), ...siblings.map((x) => paths.holiday(x)));
   const localXmas = h.slug === "christmas-lights" ? cityServices.filter((cs) => cs.service === "permanent-christmas-lights") : [];
 
   return (
@@ -45,6 +42,7 @@ export function HolidayPage({ h }: { h: Holiday }) {
       <JsonLd
         data={pageGraph({
           path, title: info.title, description: info.description, crumbs,
+          mainEntity: `${absoluteUrl(path)}#service`,
           extra: [serviceNode({ path, name: holidayH1(h), serviceType: h.primaryKeyword, description: h.metaDescription }), faqNode(path, h.faqs)],
         })}
       />
@@ -54,7 +52,7 @@ export function HolidayPage({ h }: { h: Holiday }) {
       <Section>
         <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
           <SectionHeading eyebrow={h.navLabel} title={`${h.name} Lighting Without the Ladder`} />
-          <Prose paragraphs={h.intro} />
+          <Prose paragraphs={h.intro} linker={linker} />
         </div>
       </Section>
 
@@ -82,14 +80,14 @@ export function HolidayPage({ h }: { h: Holiday }) {
 
       <Section>
         <SectionHeading eyebrow="Scene Ideas" title={`${h.name} Patterns to Try`} />
-        <FeatureGrid items={h.ideas.map((x, i) => ({ ...x, icon: (["sparkles", "palette", "music", "sunset", "heart"] as const)[i % 5] }))} />
+        <FeatureGrid linker={linker} items={h.ideas.map((x, i) => ({ ...x, icon: (["sparkles", "palette", "music", "sunset", "heart"] as const)[i % 5] }))} />
       </Section>
 
       {h.sections?.map((s, i) => (
         <Section key={s.heading} tone={i % 2 === 0 ? "light" : "dark"}>
           <div className="grid gap-2 lg:gap-10 lg:grid-cols-2">
             <SectionHeading tone={i % 2 === 0 ? "light" : "dark"} title={s.heading} />
-            <Prose tone={i % 2 === 0 ? "light" : "dark"} paragraphs={s.paragraphs} />
+            <Prose tone={i % 2 === 0 ? "light" : "dark"} paragraphs={s.paragraphs} linker={linker} />
           </div>
         </Section>
       ))}
@@ -99,14 +97,14 @@ export function HolidayPage({ h }: { h: Holiday }) {
           <span className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-zia/20 font-heading text-2xl text-chile" aria-hidden="true">⏱</span>
           <div>
             <h2 className="text-2xl font-semibold text-ink">Scheduling Tip: Set It and Forget It</h2>
-            <p className="mt-2 text-lg text-slate-700">{h.schedulingTip}</p>
+            <p className="mt-2 text-lg text-slate-700">{linker.link(h.schedulingTip)}</p>
           </div>
         </div>
       </Section>
 
       <Section tone="light" className="pt-0 sm:pt-0">
         <SectionHeading tone="light" eyebrow="FAQs" title={`${h.name} Lighting FAQs`} />
-        <div className="max-w-4xl"><FAQAccordion faqs={h.faqs} /></div>
+        <div className="max-w-4xl"><FAQAccordion faqs={h.faqs} linker={linker} /></div>
       </Section>
 
       <Section>
@@ -128,6 +126,16 @@ export function HolidayPage({ h }: { h: Holiday }) {
           ))}
         </div>
       </Section>
+
+      <RelatedLinks
+        title={`${h.name} Lighting Across the Albuquerque Metro`}
+        groups={[
+          { heading: "Where the Lights Go", links: holidayServiceLinks() },
+          { heading: `${h.name} Lights by City`, links: topCityOrder.slice(0, 7).map((s) => ({ href: paths.city(s), label: `${h.slug === "christmas-lights" ? "Christmas" : "Holiday"} lights in ${cityLabel(cities.find((c) => c.slug === s)!)}` })) },
+          { heading: "Every Occasion", links: holidays.filter((x) => x.slug !== h.slug && !h.siblings.includes(x.slug) && x.slug !== "christmas-lights").slice(0, 6).map((x) => ({ href: paths.holiday(x), label: `${x.navLabel} lighting` })) },
+          { heading: "Guides", links: postLinks(relatedPosts({ service: path })) },
+        ]}
+      />
 
       <CTABand title={`Ready for ${h.name} at the Tap of a Button?`} />
     </>

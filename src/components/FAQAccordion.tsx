@@ -1,8 +1,9 @@
 import { Plus } from "lucide-react";
 import type { FAQ } from "@/data/types";
+import type { Linker } from "@/lib/linker";
 
 /** Zero-JS accordion. Pair with faqNode() in the page's JSON-LD graph. */
-export function FAQAccordion({ faqs, tone = "light" }: { faqs: FAQ[]; tone?: "dark" | "light" }) {
+export function FAQAccordion({ faqs, tone = "light", linker }: { faqs: FAQ[]; tone?: "dark" | "light"; linker?: Linker }) {
   const dark = tone === "dark";
   return (
     <div className="space-y-3">
@@ -12,7 +13,7 @@ export function FAQAccordion({ faqs, tone = "light" }: { faqs: FAQ[]; tone?: "da
             <h3 className="text-base sm:text-lg">{f.q}</h3>
             <Plus className={`faq-icon h-5 w-5 shrink-0 transition-transform ${dark ? "text-cyan" : "text-chile"}`} aria-hidden="true" />
           </summary>
-          <p className={`px-5 pb-5 leading-relaxed ${dark ? "text-slate-300" : "text-slate-600"}`}>{f.a}</p>
+          <p className={`px-5 pb-5 leading-relaxed ${dark ? "text-slate-300" : "text-slate-600"}`}>{linker ? linker.link(f.a) : f.a}</p>
         </details>
       ))}
     </div>

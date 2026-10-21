@@ -9,7 +9,8 @@ cp .env.example .env.local   # set QUOTE_WEBHOOK_URL
 npm run dev                  # http://localhost:3000
 npm run build && npm start   # production build
 npm run lint && npm run typecheck
-node scripts/qa-crawl.mjs http://localhost:3000   # after `npm start`: SEO/H1/link/JSON-LD checks
+npm run qa:crawl -- http://localhost:3000    # after `npm start`: full on-site SEO audit
+npm run qa:schema -- http://localhost:3000   # validates every JSON-LD node against schema.org
 ```
 
 ## Before launch: fill in the placeholders
@@ -73,3 +74,32 @@ Use JPG/PNG at ≥ 1600px wide. `next/image` serves AVIF/WebP at the right size 
 | `src/app/api/quote/` | Quote form endpoint: validates the submission, checks the honeypot and forwards JSON to `QUOTE_WEBHOOK_URL` |
 
 The `/thank-you/` page is `noindex` and is where to fire conversion tracking.
+
+## On-site SEO: what's built in
+
+**Technical**
+- Canonical, self-referencing `hreflang` (en-US + x-default), and `robots`/`googlebot` meta on every page (`max-image-preview:large`, `max-snippet:-1`)
+- `/thank-you/` is noindexed (meta and `X-Robots-Tag`); `/api/` is disallowed and sends `X-Robots-Tag: noindex`
+- XML sitemap with `<lastmod>` and image entries, `robots.txt` (sitemap + host), RSS feed at `/blog/rss.xml` (linked in every `<head>`), `/llms.txt` for AI assistants, web app manifest, raster logo and icons
+- Per-page Open Graph and Twitter cards with generated 1200×630 images, plus `article:*` tags on blog posts
+- Geo meta tags (`geo.region`, `geo.position`, `ICBM`) and Search Console / Bing verification through env vars
+- Security headers (HSTS, nosniff, referrer policy and others) and image caching
+- Trailing-slash URLs everywhere, one H1 per page, no skipped heading levels, alt text on every image
+
+**Structured data** (`src/lib/schema.ts`, one connected `@graph` per page)
+- WebSite, Organization (logo, contact point, `knowsAbout`) and the page type: WebPage, CollectionPage, ContactPage, AboutPage
+- BreadcrumbList on inner pages
+- LocalBusiness (HomeAndConstructionBusiness) with NAP, geo, hours, map link, `areaServed` (all cities plus an 80 km radius) and the full OfferCatalog on the home, contact, hub and city pages
+- Service on every service, application, holiday, city, neighborhood and city×service page, tied to a City/Place node with coordinates
+- FAQPage, ItemList (hubs), HowTo (`/how-it-works/`), ImageGallery (`/project-showcase/`), BlogPosting (word count, about)
+- `hasCredential` (license) is emitted automatically once `licenseNumber` is filled in. Placeholder values are never emitted.
+- No Review/AggregateRating until real reviews exist
+
+**Internal linking**
+- Contextual in-copy links: `src/data/linkPhrases.ts` maps phrases (services, holidays, cities, neighborhoods, HOAs and more) to pages, and `src/lib/linker.tsx` links the first occurrence of each per page. It never self-links, links each target at most once per page, and caps links per paragraph and per page. On Albuquerque and Rio Rancho pages, links point to the local city×service pages. Edit the phrase list to tune it.
+- "Explore more" related-link blocks on every template (`src/lib/related.ts`), keyword-rich "Popular services in [City]" lists, holiday scene chips on location pages, and related guides chosen by matching service and city
+- Footer links to every service, application, holiday, city, neighborhood and local service page, plus an HTML sitemap at `/site-map/`. Every page is within 2 clicks of the homepage.
+
+**Keyword targeting:** each page targets one primary query. The Albuquerque city×service pages target installation intent ("Christmas light installation", "roofline light installation" and so on) so they don't cannibalize the main service and holiday pages.
+
+**After launch:** set `NEXT_PUBLIC_SITE_URL`, verify in Search Console and Bing Webmaster Tools, submit `/sitemap.xml`, and run both QA scripts against the live URL.
