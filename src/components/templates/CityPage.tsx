@@ -48,7 +48,7 @@ export function CityPage({ city }: { city: City }) {
   const nearby = city.nearby.map((s) => getCity(s)).filter((c): c is City => Boolean(c));
   const matrix = cityServices.filter((cs) => cs.city === city.slug);
   const localLinks = Object.fromEntries(matrix.map((cs) => [cs.service, paths.cityService(cs)]));
-  const hero = heroImages[city.slug] ?? { src: "/images/placeholders/hero-albuquerque-home-night.jpg", alt: `Home in ${label}, New Mexico with permanent outdoor lighting at night` };
+  const hero = heroImages[city.slug] ?? { src: "/images/hero-albuquerque-stucco-home-night.jpg", alt: `Home in ${label}, New Mexico with permanent outdoor lighting at night` };
   const neighborhoodSlugs = new Set(neighborhoods.map((n) => n.slug));
 
   return (

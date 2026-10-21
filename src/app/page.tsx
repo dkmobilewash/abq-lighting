@@ -43,7 +43,7 @@ export default function Home() {
         eyebrow="Serving Albuquerque, New Mexico"
         title={<>Permanent Outdoor Lighting in <span className="accent-underline">Albuquerque</span></>}
         subhead="Year-round, app-controlled LED lights for your roofline, parapets and walls. Warm white every night, any color for every holiday, and no more ladders."
-        imageAlt="Albuquerque Pueblo Revival home glowing with permanent warm white lights along its parapets at night"
+        imageAlt="Albuquerque stucco home with a tile roof glowing with permanent warm white roofline lights and landscape lighting at night"
         form
         cityName="Albuquerque"
         citySlug="albuquerque"

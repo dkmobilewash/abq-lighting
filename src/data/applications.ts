@@ -17,7 +17,7 @@ export const applications: Application[] = [
     cardBlurb:
       "Permanent roofline, wall and patio lighting for Albuquerque homes, controlled from one app.",
     icon: "home",
-    image: "/images/placeholders/hero-albuquerque-home-night.jpg",
+    image: "/images/hero-albuquerque-stucco-home-night.jpg",
     imageAlt:
       "Albuquerque home at night with permanent warm-white roofline and accent lighting",
     intro: [

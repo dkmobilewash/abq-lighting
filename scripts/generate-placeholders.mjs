@@ -109,7 +109,7 @@ const shapes = {
 };
 
 const images = [
-  ["hero-albuquerque-home-night", "parapet", WARM.concat(["#FFC27A"])],
+  // hero image is now a real photo: public/images/hero-albuquerque-stucco-home-night.jpg
   ["roofline-stucco-home-night", "pitched", WARM],
   ["parapet-pueblo-revival-night", "parapet", WARM],
   ["territorial-home-warm-white", "adobe", WARM],

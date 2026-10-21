@@ -74,7 +74,7 @@ export const posts: Post[] = [
       "The factors that shape permanent outdoor lighting cost in Albuquerque: footage, roofline complexity, stories, parapets, zones, power and add-ons.",
     date: "2026-08-04",
     readMinutes: 5,
-    image: "/images/placeholders/hero-albuquerque-home-night.jpg",
+    image: "/images/hero-albuquerque-stucco-home-night.jpg",
     imageAlt:
       "Albuquerque home at night with permanent outdoor lighting along the roofline and warm white accents",
     relatedService: "/permanent-outdoor-lighting/",

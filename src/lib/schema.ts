@@ -60,7 +60,7 @@ export function localBusinessNode(): Node {
     name: business.name,
     alternateName: business.shortName,
     url: `${siteUrl}/`,
-    image: absoluteUrl("/images/placeholders/hero-albuquerque-home-night.jpg"),
+    image: absoluteUrl("/images/hero-albuquerque-stucco-home-night.jpg"),
     telephone: business.phone,
     email: business.email,
     priceRange: "$$",

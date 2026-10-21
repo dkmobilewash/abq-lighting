@@ -7,7 +7,7 @@ same filename (or update the path in the `/src/data/*.ts` file that references i
 
 | File | Used for | Replace with |
 |---|---|---|
-| hero-albuquerque-home-night.jpg | Home / city hero | Wide night shot of a lit ABQ home (≥ 2000px wide) |
+| ~~hero-albuquerque-home-night.jpg~~ | Home / city hero | ✅ Replaced: real photo now at `/images/hero-albuquerque-stucco-home-night.jpg` (1600×1000) |
 | roofline-stucco-home-night.jpg | Roofline service | Pitched-roof stucco home, roofline lit |
 | parapet-pueblo-revival-night.jpg | Parapet service | Flat-roof Pueblo Revival home with lit parapets |
 | territorial-home-warm-white.jpg | Territorial examples | Territorial home, warm white |

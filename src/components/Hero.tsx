@@ -8,7 +8,7 @@ import { QuoteForm } from "./QuoteForm";
  * With `form`, a compact quote form shows on the right (desktop only).
  */
 export function Hero({
-  eyebrow, title, subhead, image = "/images/placeholders/hero-albuquerque-home-night.jpg", imageAlt,
+  eyebrow, title, subhead, image = "/images/hero-albuquerque-stucco-home-night.jpg", imageAlt,
   form, cityName, citySlug, secondary = { href: "/project-showcase/", label: "View Projects" }, primaryLabel, children,
 }: {
   eyebrow: string;
