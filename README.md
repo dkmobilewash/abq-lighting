@@ -15,7 +15,7 @@ npm run qa:schema -- http://localhost:3000   # validates every JSON-LD node agai
 
 ## Before launch: fill in the placeholders
 
-1. **`src/data/business.ts`**: phone, email, address, ZIP, domain, controller brand, warranty years, license #, socials.
+1. **`src/data/business.ts`**: email, address, ZIP, domain, controller brand, warranty years, license #, socials.
    Set `hasPublicApps: true` once your system has App Store / Google Play apps, and set `googleReviewsUrl`.
 2. Search for anything left to fill in:
    ```bash
@@ -32,7 +32,7 @@ npm run qa:schema -- http://localhost:3000   # validates every JSON-LD node agai
 
 ## Common edits
 
-**Change the phone number:** edit `phone` in `src/data/business.ts`. The header, footer, sticky mobile bar, NAP cards,
+**Change the phone number** (currently (505) 576-7891): edit `phone` in `src/data/business.ts`. The header, footer, sticky mobile bar, NAP cards,
 schema and `tel:` links all read from it.
 
 **Add a city:**

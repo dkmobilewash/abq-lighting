@@ -5,7 +5,7 @@
 export const business = {
   name: "Albuquerque Permanent Lighting Co.",
   shortName: "ABQ Permanent Lighting",
-  phone: "[PHONE]", // e.g. (505) 555-0123
+  phone: "(505) 576-7891",
   email: "[EMAIL]",
   street: "[STREET ADDRESS]",
   city: "Albuquerque",
@@ -27,10 +27,18 @@ export const business = {
 /** Human-readable hours for display. Keep in sync with `business.hours`. */
 export const hoursDisplay = "Mon–Sat, 8:00 AM – 6:00 PM";
 
-/** Digits-only phone for tel: links (falls back to "#" while the placeholder is in place). */
+/** Phone in E.164 (+15055767891), or null while the placeholder is in place. */
+export function phoneE164(): string | null {
+  const digits = business.phone.replace(/\D/g, "");
+  if (digits.length === 10) return `+1${digits}`;
+  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
+  return null;
+}
+
+/** tel: link for click-to-call (falls back to the contact page while the placeholder is in place). */
 export function telHref(): string {
-  const digits = business.phone.replace(/[^\d+]/g, "");
-  return digits.length >= 10 ? `tel:${digits}` : "/contact-us/";
+  const e164 = phoneE164();
+  return e164 ? `tel:${e164}` : "/contact-us/";
 }
 
 export const fullAddress = `${business.street}, ${business.city}, ${business.state} ${business.zip}`;

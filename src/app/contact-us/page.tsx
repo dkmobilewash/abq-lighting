@@ -21,7 +21,7 @@ export default function Page() {
       <PageHeader eyebrow="Contact" title="Contact Albuquerque Permanent Lighting Co." intro="Questions, quotes or service requests: call, email or send us a message and a local team member will get back to you." />
       <Breadcrumbs crumbs={crumbs} />
       <Section>
-        <NAPCard heading="Visit, Call or Email" />
+        <NAPCard heading="Visit, Call or Email" contactLink={false} />
       </Section>
       <Section tone="panel">
         <div className="mx-auto max-w-3xl">

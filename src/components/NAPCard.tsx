@@ -1,9 +1,10 @@
+import Link from "next/link";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { business, hoursDisplay, telHref } from "@/data/business";
 import { MapEmbed } from "./MapEmbed";
 import { CallButton, QuoteButton } from "./ui";
 
-export function NAPCard({ heading, mapQuery }: { heading: string; mapQuery?: string }) {
+export function NAPCard({ heading, mapQuery, contactLink = true }: { heading: string; mapQuery?: string; contactLink?: boolean }) {
   return (
     <div className="card grid gap-8 overflow-hidden p-6 sm:p-8 lg:grid-cols-2">
       <div>
@@ -19,6 +20,7 @@ export function NAPCard({ heading, mapQuery }: { heading: string; mapQuery?: str
           <QuoteButton label="Get a Quote" />
           <CallButton />
         </div>
+        {contactLink && <Link href="/contact-us/" className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-cyan hover:text-zia">Contact page &amp; directions →</Link>}
       </div>
       <MapEmbed query={mapQuery} />
     </div>

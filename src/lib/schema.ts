@@ -1,5 +1,5 @@
 import { applications } from "@/data/applications";
-import { business, fullAddress, sameAs, siteUrl } from "@/data/business";
+import { business, fullAddress, phoneE164, sameAs, siteUrl } from "@/data/business";
 import { cities, cityLabel } from "@/data/cities";
 import { holidays } from "@/data/holidays";
 import { services } from "@/data/services";
@@ -48,7 +48,7 @@ const logoNode = { "@type": "ImageObject", "@id": ids.logo, url: absoluteUrl("/l
 const contactPoint = {
   "@type": "ContactPoint",
   contactType: "customer service",
-  telephone: business.phone,
+  ...(phoneE164() ? { telephone: phoneE164() } : {}),
   email: business.email,
   areaServed: "US-NM",
   availableLanguage: ["English"],
@@ -75,7 +75,7 @@ export function organizationNode(): Node {
     logo: logoNode,
     image: { "@id": ids.logo },
     ...real("email", business.email),
-    ...real("telephone", business.phone),
+    ...(phoneE164() ? { telephone: phoneE164() } : {}),
     contactPoint,
     knowsAbout,
     areaServed: { "@type": "State", name: "New Mexico" },
@@ -137,7 +137,7 @@ export function localBusinessNode({ catalog = false }: { catalog?: boolean } = {
     url: `${siteUrl}/`,
     logo: { "@id": ids.logo },
     image: [absoluteUrl("/images/hero-albuquerque-stucco-home-night.jpg"), absoluteUrl("/logo.png")],
-    ...real("telephone", business.phone),
+    ...(phoneE164() ? { telephone: phoneE164() } : {}),
     ...real("email", business.email),
     priceRange: "$$",
     currenciesAccepted: "USD",

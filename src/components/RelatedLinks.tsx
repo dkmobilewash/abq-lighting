@@ -55,5 +55,6 @@ const helpLinks = [
   { href: "/how-it-works/", label: "How installation works" },
   { href: "/faqs/", label: "Permanent lighting FAQs" },
   { href: "/why-us/", label: "Why choose a local Albuquerque installer" },
+  { href: "/contact-us/", label: "Contact our Albuquerque team" },
   { href: "/site-map/", label: "Full site map" },
 ];
